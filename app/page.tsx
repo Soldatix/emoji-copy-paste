@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronRight, Clipboard, Copy, Heart, Info, Moon, Search, Sparkles, Sun, Trash2, X, Zap } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clipboard, Copy, Heart, Info, Moon, Search, Sparkles, Sun, Trash2, X, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ const ui = {
     search: "Search emojis or meanings…", all: "All",
     categories: { smileys: "Smileys", people: "People", animals: "Animals & nature", food: "Food & drink", activities: "Activities", travel: "Travel & places", objects: "Objects", symbols: "Symbols", flags: "Flags" },
     favorites: "Favorites", recent: "Recently used", results: "emojis", noResults: "No emojis found", noResultsHint: "Try another word or choose a different category.",
-    copy: "Copy emoji", copied: "copied!", copyImage: "Copy flag image", imageCopied: "Flag image copied!", imageCopyFallback: "Image copying is not supported here. The flag emoji was copied instead.", moreCategories: "Show more categories", add: "Add to collection", added: "Added to your collection", collection: "Your emoji collection",
+    copy: "Copy emoji", copied: "copied!", copyImage: "Copy flag image", imageCopied: "Flag image copied!", imageCopyFallback: "Image copying is not supported here. The flag emoji was copied instead.", previousCategories: "Show previous categories", moreCategories: "Show more categories", add: "Add to collection", added: "Added to your collection", collection: "Your emoji collection",
     collectionHint: "Build a combination, then copy it all at once.", copyAll: "Copy all", clear: "Clear", collectionCopied: "Emoji collection copied!",
     info: "Info & Support", theme: "Change theme", favoriteAdded: "Added to favorites", favoriteRemoved: "Removed from favorites",
     emptyFavorites: "Your favorite emojis will appear here.", emptyRecent: "Emojis you copy will appear here.",
@@ -47,7 +47,7 @@ const ui = {
     search: "Pretražite emojije ili značenja…", all: "Sve",
     categories: { smileys: "Lica i osjećaji", people: "Ljudi", animals: "Životinje i priroda", food: "Hrana i piće", activities: "Aktivnosti", travel: "Putovanja i mjesta", objects: "Predmeti", symbols: "Simboli", flags: "Zastave" },
     favorites: "Omiljeni", recent: "Nedavno korišteni", results: "emojija", noResults: "Nema pronađenih emojija", noResultsHint: "Pokušajte drugu riječ ili odaberite drugu kategoriju.",
-    copy: "Kopiraj emoji", copied: "kopiran!", copyImage: "Kopiraj sliku zastave", imageCopied: "Slika zastave je kopirana!", imageCopyFallback: "Kopiranje slike ovdje nije podržano. Umjesto nje kopiran je emoji zastave.", moreCategories: "Prikaži još kategorija", add: "Dodaj u zbirku", added: "Dodano u vašu zbirku", collection: "Vaša emoji zbirka",
+    copy: "Kopiraj emoji", copied: "kopiran!", copyImage: "Kopiraj sliku zastave", imageCopied: "Slika zastave je kopirana!", imageCopyFallback: "Kopiranje slike ovdje nije podržano. Umjesto nje kopiran je emoji zastave.", previousCategories: "Prikaži prethodne kategorije", moreCategories: "Prikaži još kategorija", add: "Dodaj u zbirku", added: "Dodano u vašu zbirku", collection: "Vaša emoji zbirka",
     collectionHint: "Složite kombinaciju, a zatim je kopirajte odjednom.", copyAll: "Kopiraj sve", clear: "Izbriši", collectionCopied: "Emoji zbirka je kopirana!",
     info: "Info i podrška", theme: "Promijeni temu", favoriteAdded: "Dodano u omiljene", favoriteRemoved: "Uklonjeno iz omiljenih",
     emptyFavorites: "Vaši omiljeni emojiji pojavit će se ovdje.", emptyRecent: "Emojiji koje kopirate pojavit će se ovdje.",
@@ -62,7 +62,7 @@ const ui = {
     eyebrow: "Kostenlose Online-App", title: "Emoji Copy & Paste", subtitle: "Finde das passende Emoji, verstehe seine Bedeutung und kopiere es sofort.", search: "Emojis oder Bedeutungen suchen…", all: "Alle",
     categories: { smileys: "Smileys", people: "Menschen", animals: "Tiere & Natur", food: "Essen & Trinken", activities: "Aktivitäten", travel: "Reisen & Orte", objects: "Objekte", symbols: "Symbole", flags: "Flaggen" },
     favorites: "Favoriten", recent: "Zuletzt verwendet", results: "Emojis", noResults: "Keine Emojis gefunden", noResultsHint: "Versuche ein anderes Wort oder eine andere Kategorie.",
-    copy: "Emoji kopieren", copied: "kopiert!", copyImage: "Flaggenbild kopieren", imageCopied: "Flaggenbild kopiert!", imageCopyFallback: "Das Kopieren von Bildern wird hier nicht unterstützt. Stattdessen wurde das Flaggen-Emoji kopiert.", moreCategories: "Weitere Kategorien anzeigen", add: "Zur Sammlung hinzufügen", added: "Zur Sammlung hinzugefügt", collection: "Deine Emoji-Sammlung", collectionHint: "Stelle eine Kombination zusammen und kopiere alles auf einmal.", copyAll: "Alle kopieren", clear: "Leeren", collectionCopied: "Emoji-Sammlung kopiert!",
+    copy: "Emoji kopieren", copied: "kopiert!", copyImage: "Flaggenbild kopieren", imageCopied: "Flaggenbild kopiert!", imageCopyFallback: "Das Kopieren von Bildern wird hier nicht unterstützt. Stattdessen wurde das Flaggen-Emoji kopiert.", previousCategories: "Vorherige Kategorien anzeigen", moreCategories: "Weitere Kategorien anzeigen", add: "Zur Sammlung hinzufügen", added: "Zur Sammlung hinzugefügt", collection: "Deine Emoji-Sammlung", collectionHint: "Stelle eine Kombination zusammen und kopiere alles auf einmal.", copyAll: "Alle kopieren", clear: "Leeren", collectionCopied: "Emoji-Sammlung kopiert!",
     info: "Info & Support", theme: "Design wechseln", favoriteAdded: "Zu Favoriten hinzugefügt", favoriteRemoved: "Aus Favoriten entfernt", emptyFavorites: "Deine Lieblings-Emojis erscheinen hier.", emptyRecent: "Kopierte Emojis erscheinen hier.",
     supportTitle: "Projekt unterstützen", supportIntro: "Die Apps und Spiele sind kostenlos, freiwillige Spenden sind jedoch willkommen.", charity: "Ein Teil der Spenden wird an verschiedene Hilfsorganisationen weitergeleitet. Der größte Teil geht an Einrichtungen, die Kinder ohne angemessene elterliche Fürsorge betreuen.",
     donateTo: "Spenden sind möglich über:", paypal: "PayPal-Konto", paypalText: "Unterstütze das Projekt sicher über PayPal.", openPaypal: "PayPal öffnen", stripe: "Kartenzahlung (Stripe)", stripeText: "Spende sicher mit Kredit- oder Debitkarte.", openStripe: "Stripe öffnen", crypto: "Krypto-Wallet", cryptoText: "Du kannst das Projekt auch mit Kryptowährungen unterstützen.", addressCopied: "Adresse kopiert!", appearanceNote: "Das Aussehen von Emojis kann je nach Gerät und App leicht variieren.",
@@ -70,7 +70,7 @@ const ui = {
   it: {
     eyebrow: "App online gratuita", title: "Emoji Copy & Paste", subtitle: "Trova l'emoji giusta, capiscine il significato e copiala subito.", search: "Cerca emoji o significati…", all: "Tutti",
     categories: { smileys: "Faccine", people: "Persone", animals: "Animali e natura", food: "Cibo e bevande", activities: "Attività", travel: "Viaggi e luoghi", objects: "Oggetti", symbols: "Simboli", flags: "Bandiere" },
-    favorites: "Preferiti", recent: "Usati di recente", results: "emoji", noResults: "Nessuna emoji trovata", noResultsHint: "Prova un'altra parola o categoria.", copy: "Copia emoji", copied: "copiata!", copyImage: "Copia l'immagine della bandiera", imageCopied: "Immagine della bandiera copiata!", imageCopyFallback: "La copia dell'immagine non è supportata qui. È stata copiata l'emoji della bandiera.", moreCategories: "Mostra altre categorie", add: "Aggiungi alla raccolta", added: "Aggiunta alla raccolta", collection: "La tua raccolta di emoji", collectionHint: "Crea una combinazione e copiala tutta insieme.", copyAll: "Copia tutto", clear: "Svuota", collectionCopied: "Raccolta copiata!",
+    favorites: "Preferiti", recent: "Usati di recente", results: "emoji", noResults: "Nessuna emoji trovata", noResultsHint: "Prova un'altra parola o categoria.", copy: "Copia emoji", copied: "copiata!", copyImage: "Copia l'immagine della bandiera", imageCopied: "Immagine della bandiera copiata!", imageCopyFallback: "La copia dell'immagine non è supportata qui. È stata copiata l'emoji della bandiera.", previousCategories: "Mostra le categorie precedenti", moreCategories: "Mostra altre categorie", add: "Aggiungi alla raccolta", added: "Aggiunta alla raccolta", collection: "La tua raccolta di emoji", collectionHint: "Crea una combinazione e copiala tutta insieme.", copyAll: "Copia tutto", clear: "Svuota", collectionCopied: "Raccolta copiata!",
     info: "Info e supporto", theme: "Cambia tema", favoriteAdded: "Aggiunta ai preferiti", favoriteRemoved: "Rimossa dai preferiti", emptyFavorites: "Le tue emoji preferite appariranno qui.", emptyRecent: "Le emoji copiate appariranno qui.",
     supportTitle: "Sostieni il progetto", supportIntro: "Le app e i giochi sono gratuiti, ma le donazioni volontarie sono benvenute.", charity: "Una parte delle donazioni ricevute sarà destinata a varie organizzazioni benefiche. La parte maggiore sarà donata a istituti che assistono bambini senza adeguate cure parentali.",
     donateTo: "Puoi donare tramite:", paypal: "Conto PayPal", paypalText: "Sostieni il progetto in modo sicuro con PayPal.", openPaypal: "Apri PayPal", stripe: "Pagamento con carta (Stripe)", stripeText: "Dona in sicurezza con carta di credito o debito.", openStripe: "Apri Stripe", crypto: "Portafoglio crypto", cryptoText: "Puoi sostenere il progetto anche con criptovalute.", addressCopied: "indirizzo copiato!", appearanceNote: "L'aspetto delle emoji può variare leggermente tra dispositivi e app.",
@@ -78,7 +78,7 @@ const ui = {
   es: {
     eyebrow: "Aplicación online gratuita", title: "Emoji Copy & Paste", subtitle: "Encuentra el emoji adecuado, comprende su significado y cópialo al instante.", search: "Buscar emojis o significados…", all: "Todos",
     categories: { smileys: "Caritas", people: "Personas", animals: "Animales y naturaleza", food: "Comida y bebida", activities: "Actividades", travel: "Viajes y lugares", objects: "Objetos", symbols: "Símbolos", flags: "Banderas" },
-    favorites: "Favoritos", recent: "Usados recientemente", results: "emojis", noResults: "No se encontraron emojis", noResultsHint: "Prueba otra palabra o categoría.", copy: "Copiar emoji", copied: "¡copiado!", copyImage: "Copiar imagen de bandera", imageCopied: "¡Imagen de bandera copiada!", imageCopyFallback: "Aquí no se admite copiar imágenes. Se copió el emoji de la bandera.", moreCategories: "Mostrar más categorías", add: "Añadir a la colección", added: "Añadido a la colección", collection: "Tu colección de emojis", collectionHint: "Crea una combinación y cópiala toda de una vez.", copyAll: "Copiar todo", clear: "Borrar", collectionCopied: "¡Colección copiada!",
+    favorites: "Favoritos", recent: "Usados recientemente", results: "emojis", noResults: "No se encontraron emojis", noResultsHint: "Prueba otra palabra o categoría.", copy: "Copiar emoji", copied: "¡copiado!", copyImage: "Copiar imagen de bandera", imageCopied: "¡Imagen de bandera copiada!", imageCopyFallback: "Aquí no se admite copiar imágenes. Se copió el emoji de la bandera.", previousCategories: "Mostrar categorías anteriores", moreCategories: "Mostrar más categorías", add: "Añadir a la colección", added: "Añadido a la colección", collection: "Tu colección de emojis", collectionHint: "Crea una combinación y cópiala toda de una vez.", copyAll: "Copiar todo", clear: "Borrar", collectionCopied: "¡Colección copiada!",
     info: "Info y soporte", theme: "Cambiar tema", favoriteAdded: "Añadido a favoritos", favoriteRemoved: "Eliminado de favoritos", emptyFavorites: "Tus emojis favoritos aparecerán aquí.", emptyRecent: "Los emojis que copies aparecerán aquí.",
     supportTitle: "Apoya el proyecto", supportIntro: "Las aplicaciones y los juegos son gratuitos, pero las donaciones voluntarias son bienvenidas.", charity: "Una parte de las donaciones se destinará a distintas organizaciones benéficas. La mayor parte será donada a instituciones que cuidan a niños sin una atención parental adecuada.",
     donateTo: "Puedes donar mediante:", paypal: "Cuenta PayPal", paypalText: "Apoya el proyecto de forma segura con PayPal.", openPaypal: "Abrir PayPal", stripe: "Pago con tarjeta (Stripe)", stripeText: "Dona de forma segura con tarjeta de crédito o débito.", openStripe: "Abrir Stripe", crypto: "Billetera cripto", cryptoText: "También puedes apoyar el proyecto con criptomonedas.", addressCopied: "¡dirección copiada!", appearanceNote: "La apariencia de los emojis puede variar ligeramente entre dispositivos y aplicaciones.",
@@ -102,6 +102,7 @@ export default function Home() {
   const [recent, setRecent] = useState<string[]>([]);
   const [collection, setCollection] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
+  const [categoryScroll, setCategoryScroll] = useState({ left: false, right: false });
   const categoryStripRef = useRef<HTMLElement>(null);
   const { resolvedTheme, setTheme } = useTheme();
   const t = ui[language];
@@ -112,6 +113,25 @@ export default function Home() {
     setFavorites(loadList("emoji-favorites")); setRecent(loadList("emoji-recent")); setReady(true);
   }, []);
   useEffect(() => { if (ready) { localStorage.setItem("emoji-language", language); document.documentElement.lang = language; } }, [language, ready]);
+  useEffect(() => {
+    const strip = categoryStripRef.current;
+    if (!strip) return;
+    const updateCategoryScroll = () => {
+      const maxScrollLeft = Math.max(0, strip.scrollWidth - strip.clientWidth);
+      setCategoryScroll({
+        left: strip.scrollLeft > 4,
+        right: strip.scrollLeft < maxScrollLeft - 4,
+      });
+    };
+    updateCategoryScroll();
+    strip.addEventListener("scroll", updateCategoryScroll, { passive: true });
+    const resizeObserver = new ResizeObserver(updateCategoryScroll);
+    resizeObserver.observe(strip);
+    return () => {
+      strip.removeEventListener("scroll", updateCategoryScroll);
+      resizeObserver.disconnect();
+    };
+  }, [language]);
 
   const visibleEmojis = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase(language);
@@ -165,14 +185,15 @@ export default function Home() {
       <section className="hero" id="top"><div className="eyebrow"><Sparkles size={15} /> {t.eyebrow}</div><h1>{t.title}</h1><p>{t.subtitle}</p></section>
       <section className="workspace" aria-label={t.title}>
         <div className="search-wrap"><Search className="search-icon" aria-hidden="true" /><Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t.search} className="search-input" aria-label={t.search} />{query && <Button className="clear-search" variant="ghost" size="icon" onClick={() => setQuery("")} aria-label={t.clear}><X /></Button>}</div>
-        <div className="category-nav-wrap">
+        <div className={`category-nav-wrap ${categoryScroll.left ? "can-scroll-left" : ""} ${categoryScroll.right ? "can-scroll-right" : ""}`}>
+          {categoryScroll.left && <Button className="category-arrow category-prev" variant="outline" size="icon" aria-label={t.previousCategories} title={t.previousCategories} onClick={() => { const strip = categoryStripRef.current; if (strip) strip.scrollBy({ left: -Math.max(300, strip.clientWidth * 0.72), behavior: "smooth" }); }}><ChevronLeft /></Button>}
           <nav ref={categoryStripRef} className="category-strip" aria-label="Emoji categories">
             <CategoryButton active={activeCategory === "all"} onClick={() => setActiveCategory("all")} icon="✨" label={t.all} />
             {categories.map((category) => <CategoryButton key={category} active={activeCategory === category} onClick={() => setActiveCategory(category)} icon={categoryIcons[category]} label={t.categories[category]} />)}
             <CategoryButton active={activeCategory === "favorites"} onClick={() => setActiveCategory("favorites")} icon="❤️" label={t.favorites} />
             <CategoryButton active={activeCategory === "recent"} onClick={() => setActiveCategory("recent")} icon="🕘" label={t.recent} />
           </nav>
-          <Button className="category-next" variant="outline" size="icon" aria-label={t.moreCategories} title={t.moreCategories} onClick={() => { const strip = categoryStripRef.current; if (strip) strip.scrollBy({ left: Math.max(300, strip.clientWidth * 0.72), behavior: "smooth" }); }}><ChevronRight /></Button>
+          {categoryScroll.right && <Button className="category-arrow category-next" variant="outline" size="icon" aria-label={t.moreCategories} title={t.moreCategories} onClick={() => { const strip = categoryStripRef.current; if (strip) strip.scrollBy({ left: Math.max(300, strip.clientWidth * 0.72), behavior: "smooth" }); }}><ChevronRight /></Button>}
         </div>
         {collection.length > 0 && <div className="collection-panel"><div className="collection-copy"><span className="collection-label">{t.collection}</span><div className="collection-emojis">{collection.join("")}</div><span className="collection-hint">{t.collectionHint}</span></div><div className="collection-actions"><Button onClick={copyCollection}><Clipboard /> {t.copyAll}</Button><Button variant="outline" onClick={() => setCollection([])}><Trash2 /> {t.clear}</Button></div></div>}
         <div className="results-heading"><span><strong>{visibleEmojis.length}</strong> {t.results}</span><span className="device-note">{t.appearanceNote}</span></div>
