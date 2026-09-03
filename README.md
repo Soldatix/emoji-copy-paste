@@ -10,7 +10,7 @@ A free multilingual web app for finding emoji meanings and copying emojis instan
 
 ## Features
 
-- 101 curated emojis organized into nine categories
+- 201 curated emojis organized into nine categories
 - Search by emoji or meaning
 - English, Croatian, German, Italian and Spanish interface
 - Favorites, recently used emojis and multi-emoji collections
