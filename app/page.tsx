@@ -41,6 +41,24 @@ const svgDataUrlToPngBlob = async (source: string): Promise<Blob> => {
   return new Promise((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("PNG conversion failed")), "image/png"));
 };
 
+const resizePngBlob = async (source: Blob, width: number, height: number): Promise<Blob> => {
+  const objectUrl = URL.createObjectURL(source);
+  try {
+    const image = new Image();
+    image.src = objectUrl;
+    await image.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = width; canvas.height = height;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Canvas is unavailable");
+    context.clearRect(0, 0, width, height);
+    context.drawImage(image, 0, 0, width, height);
+    return await new Promise((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("PNG resize failed")), "image/png"));
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+};
+
 const ui = {
   en: {
     eyebrow: "Free online app", title: "Emoji Copy & Paste", subtitle: "Find the right emoji, understand its meaning and copy it instantly.",
@@ -173,15 +191,18 @@ export default function Home() {
         : `https://flagcdn.com/w320/${item.flagCode}.png`;
     try {
       let pngBlob: Blob;
+      const compactHeartImage = Boolean(item.heartFaceCode && window.matchMedia("(min-width: 768px)").matches);
+      const pastedImageWidth = compactHeartImage ? 240 : 320;
       if (item.trafficSignCode) {
         pngBlob = await svgDataUrlToPngBlob(imageUrl);
       } else {
         const response = await fetch(imageUrl, { mode: "cors", cache: "force-cache" });
         if (!response.ok) throw new Error("Image unavailable");
         pngBlob = await response.blob();
+        if (compactHeartImage) pngBlob = await resizePngBlob(pngBlob, pastedImageWidth, pastedImageWidth);
       }
       const htmlSource = imageUrl.startsWith("/") ? new URL(imageUrl, window.location.origin).href : imageUrl;
-      const html = `<img src="${htmlSource}" alt="${item.meaning[language]}" width="320">`;
+      const html = `<img src="${htmlSource}" alt="${item.meaning[language]}" width="${pastedImageWidth}">`;
       await navigator.clipboard.write([new ClipboardItem({
         "image/png": pngBlob,
         "text/html": new Blob([html], { type: "text/html" }),
