@@ -48,6 +48,8 @@ npm run build
 
 React, TypeScript, Next.js, Vinext, Vite, Tailwind CSS and Cloudflare Workers.
 
+Production is deployed automatically from the `main` branch through Cloudflare.
+
 ## Notes
 
 Emoji appearance can vary by platform. Flag cards use FlagCDN images, traffic signs are rendered as vector graphics, and heart faces are original PNG artwork. All three can be copied into Word as images. The smaller Unicode copy action is shown only for traffic signs.
