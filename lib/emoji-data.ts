@@ -54,7 +54,7 @@ export const categoryIcons: Record<CategoryId, string> = {
   activities: "⚽",
   travel: "✈️",
   objects: "💡",
-  symbols: "💜",
+  symbols: "🔣",
   flags: "🏁",
   traffic: "🚦",
   hearts: "❤️",
