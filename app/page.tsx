@@ -17,7 +17,7 @@ const languages: Array<{ id: Language; label: string; flag: string }> = [
   { id: "de", label: "Deutsch", flag: "🇩🇪" }, { id: "it", label: "Italiano", flag: "🇮🇹" },
   { id: "es", label: "Español", flag: "🇪🇸" },
 ];
-const categories: CategoryId[] = ["smileys", "people", "animals", "food", "activities", "travel", "objects", "symbols", "flags", "traffic", "hearts"];
+const categories: CategoryId[] = ["smileys", "people", "animals", "food", "activities", "travel", "objects", "symbols", "flags", "traffic", "hearts"];\nconst favoritesIcon = "⭐";
 
 const itemKey = (item: EmojiEntry) => item.id || item.emoji;
 
@@ -219,7 +219,7 @@ export default function Home() {
           <nav ref={categoryStripRef} className="category-strip" aria-label="Emoji categories">
             <CategoryButton active={activeCategory === "all"} onClick={() => setActiveCategory("all")} icon="✨" label={t.all} />
             {categories.map((category) => <CategoryButton key={category} active={activeCategory === category} onClick={() => setActiveCategory(category)} icon={categoryIcons[category]} label={t.categories[category]} />)}
-            <CategoryButton active={activeCategory === "favorites"} onClick={() => setActiveCategory("favorites")} icon="⭐" label={t.favorites} />
+            <CategoryButton active={activeCategory === "favorites"} onClick={() => setActiveCategory("favorites")} icon={favoritesIcon} label={t.favorites} />
             <CategoryButton active={activeCategory === "recent"} onClick={() => setActiveCategory("recent")} icon="🕘" label={t.recent} />
           </nav>
           {categoryScroll.right && <Button className="category-arrow category-next" variant="outline" size="icon" aria-label={t.moreCategories} title={t.moreCategories} onClick={() => { const strip = categoryStripRef.current; if (strip) strip.scrollBy({ left: Math.max(300, strip.clientWidth * 0.72), behavior: "smooth" }); }}><ChevronRight /></Button>}
