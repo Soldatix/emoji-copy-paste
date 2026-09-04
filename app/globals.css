@@ -96,9 +96,17 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
 .emoji-card:hover .emoji-glyph { transform: scale(1.08) rotate(-2deg); }
 .flag-image-wrap { width: 96px; height: 72px; position: relative; display: grid; place-items: center; }
 .flag-image { position: relative; z-index: 1; width: 88px; max-height: 60px; object-fit: contain; border-radius: 7px; box-shadow: 0 7px 16px rgba(26, 20, 54, .2); transition: transform .2s ease; }
-.flag-emoji-fallback { position: absolute; inset: 0; display: grid; place-items: center; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; font-size: 45px; }
+.flag-emoji-fallback { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; font-size: 45px; }
+.flag-image-wrap.image-error .flag-emoji-fallback { opacity: 1; }
+.traffic-sign-image-wrap { width: 96px; height: 82px; }
+.traffic-sign-image { width: 78px; max-height: 78px; border-radius: 0; box-shadow: none; filter: drop-shadow(0 6px 7px rgba(26, 20, 54, .16)); }
+.traffic-sign-card .flag-emoji-fallback { font-size: 38px; }
+.heart-face-image-wrap { width: 100px; height: 86px; }
+.heart-face-image { width: 92px; max-height: 92px; border-radius: 0; box-shadow: none; filter: drop-shadow(0 7px 9px rgba(170, 15, 45, .2)); }
+.heart-face-card .flag-emoji-fallback { font-size: 34px; }
 .emoji-card:hover .flag-image { transform: scale(1.06); }
 .emoji-meaning { max-width: 210px; margin-top: 9px; color: var(--muted-foreground); font-size: 12px; line-height: 1.45; text-align: center; }
+.flag-code { color: var(--foreground); font-size: .92em; font-weight: 850; letter-spacing: .08em; white-space: nowrap; }
 .copy-prompt { margin-top: auto; padding-top: 11px; display: flex; align-items: center; gap: 5px; color: #6554d5; font-size: 11px; font-weight: 800; opacity: .72; }
 .dark .copy-prompt { color: #b5aaff; }
 .card-actions { position: absolute; top: 9px; right: 9px; display: flex; gap: 5px; }
@@ -142,7 +150,7 @@ footer { max-width: 1240px; margin: 42px auto 0; padding-top: 22px; border-top: 
   .header-actions { flex-wrap: wrap; justify-content: flex-end; }.info-button span { display: none; }.language-select { min-width: 119px; }
   .hero { margin: 35px auto 27px; }.hero p { font-size: 15px; }.search-wrap { height: 54px; }.search-input { height: 54px !important; }.search-icon { top: 16px; }
   .collection-panel { align-items: stretch; flex-direction: column; }.collection-actions button { flex: 1; }.results-heading { align-items: flex-start; flex-direction: column; }.device-note { text-align: left; }
-  .emoji-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }.emoji-card { border-radius: 17px; }.emoji-copy-area { min-height: 167px; padding: 15px 8px 31px; }.emoji-glyph { min-height: 63px; font-size: 46px; }.flag-image-wrap { width: 82px; height: 63px; }.flag-image { width: 76px; max-height: 52px; }.emoji-meaning { font-size: 10.5px; line-height: 1.4; }.copy-prompt { font-size: 0; }.copy-prompt svg { width: 15px; height: 15px; }
+  .emoji-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }.emoji-card { border-radius: 17px; }.emoji-copy-area { min-height: 167px; padding: 15px 8px 31px; }.emoji-glyph { min-height: 63px; font-size: 46px; }.flag-image-wrap { width: 82px; height: 63px; }.flag-image { width: 76px; max-height: 52px; }.traffic-sign-image-wrap { height: 72px; }.traffic-sign-image { width: 68px; max-height: 68px; }.heart-face-image-wrap { width: 82px; height: 72px; }.heart-face-image { width: 76px; max-height: 76px; }.emoji-meaning { font-size: 10.5px; line-height: 1.4; }.copy-prompt { font-size: 0; }.copy-prompt svg { width: 15px; height: 15px; }
   .payment-grid { grid-template-columns: 1fr; }.support-header { padding: 23px 20px 18px; }.support-scroll { padding: 18px 20px 24px; }.wallet-row { grid-template-columns: 45px minmax(0, 1fr) 38px; }.wallet-row button { width: 36px; padding: 0; font-size: 0; }.wallet-row button svg { margin: 0; }
 }
 @media (max-width: 420px) {

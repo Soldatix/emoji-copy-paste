@@ -1,3 +1,6 @@
+import { trafficSignEntries, type TrafficSignCode } from "@/lib/traffic-signs";
+import { heartFaceEntries, type HeartFaceCode } from "@/lib/heart-faces";
+
 export type Language = "en" | "hr" | "de" | "it" | "es";
 
 export type CategoryId =
@@ -9,13 +12,18 @@ export type CategoryId =
   | "travel"
   | "objects"
   | "symbols"
-  | "flags";
+  | "flags"
+  | "traffic"
+  | "hearts";
 
 export type EmojiEntry = {
+  id?: string;
   emoji: string;
   category: CategoryId;
   meaning: Record<Language, string>;
   flagCode?: string;
+  trafficSignCode?: TrafficSignCode;
+  heartFaceCode?: HeartFaceCode;
 };
 
 const entry = (
@@ -48,6 +56,8 @@ export const categoryIcons: Record<CategoryId, string> = {
   objects: "💡",
   symbols: "💜",
   flags: "🏁",
+  traffic: "🚦",
+  hearts: "❤️",
 };
 
 const baseEmojis: EmojiEntry[] = [
@@ -283,8 +293,10 @@ const categoryOrder: CategoryId[] = [
   "objects",
   "symbols",
   "flags",
+  "traffic",
+  "hearts",
 ];
 
-export const emojis: EmojiEntry[] = [...baseEmojis, ...additionalEmojis].sort(
+export const emojis: EmojiEntry[] = [...baseEmojis, ...additionalEmojis, ...trafficSignEntries, ...heartFaceEntries].sort(
   (a, b) => categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category),
 );

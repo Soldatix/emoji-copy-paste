@@ -4,8 +4,8 @@ import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Emoji Copy & Paste",
-  description: "Find emoji meanings and copy Unicode emojis instantly. Browse popular emojis by category in English, Croatian, German, Italian and Spanish.",
-  keywords: ["emoji", "copy emoji", "paste emoji", "emoji meanings", "Unicode emoji", "Apps and Games"],
+  description: "Find emoji meanings, country flags and common traffic signs, then copy them instantly in English, Croatian, German, Italian or Spanish.",
+  keywords: ["emoji", "copy emoji", "paste emoji", "emoji meanings", "traffic signs", "prometni znakovi", "Unicode emoji", "Apps and Games"],
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 
