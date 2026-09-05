@@ -54,7 +54,7 @@ Production is deployed automatically from the `main` branch through Cloudflare.
 
 ## Notes
 
-Emoji appearance can vary by platform. Flag cards use FlagCDN images, traffic signs are rendered as vector graphics, and heart faces are original PNG artwork. All three can be copied into Word as images. Animated cards use real GIF files so their motion can be shared or downloaded, while the copy action intentionally places a static PNG image on the clipboard.
+Emoji appearance can vary by platform. Flag cards use FlagCDN images, traffic signs are rendered as vector graphics, and heart faces are original PNG artwork. All three can be copied into Word as images. Animated cards use transparent GIF previews, while the share/download action uses a separate GIF with an opaque pale-yellow background because messaging apps can replace GIF transparency with black or another app-specific color. The copy action intentionally places a static PNG image on the clipboard.
 
 The animated yellow face artwork is based on modified [Twemoji](https://github.com/twitter/twemoji) graphics by Twitter and contributors, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The source artwork was resized and transformed into looping GIF animations.
 
