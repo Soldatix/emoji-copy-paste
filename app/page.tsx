@@ -22,6 +22,7 @@ const favoritesIcon = "⭐";
 type AnimatedFilter = "all" | "smileys" | "hearts";
 
 const itemKey = (item: EmojiEntry) => item.id || item.emoji;
+const animatedGifUrl = (filename: string) => `/animated/gif/${filename}?v=white-fallback-1`;
 
 const copyText = async (text: string) => {
   if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
@@ -228,7 +229,7 @@ export default function Home() {
   const downloadAnimation = (item: EmojiEntry) => {
     if (!item.animatedFile) return;
     const link = document.createElement("a");
-    link.href = `/animated/gif/${item.animatedFile}`;
+    link.href = animatedGifUrl(item.animatedFile);
     link.download = item.animatedFile;
     document.body.appendChild(link);
     link.click();
@@ -238,7 +239,7 @@ export default function Home() {
   };
   const shareAnimation = async (item: EmojiEntry) => {
     if (!item.animatedFile) return;
-    const animationUrl = `/animated/gif/${item.animatedFile}`;
+    const animationUrl = animatedGifUrl(item.animatedFile);
     try {
       const response = await fetch(animationUrl, { cache: "force-cache" });
       if (!response.ok) throw new Error("Animation unavailable");
@@ -291,7 +292,7 @@ export default function Home() {
         <div className="results-heading"><span><strong>{visibleEmojis.length}</strong> {t.results}</span><span className="device-note">{t.appearanceNote}</span></div>
         {visibleEmojis.length ? <div className="emoji-grid">{visibleEmojis.map((item) => {
           const hasImage = Boolean(item.flagCode || item.trafficSignCode || item.heartFaceCode || item.staticImageFile);
-          const imageSource = item.animatedFile ? `/animated/gif/${item.animatedFile}` : item.trafficSignCode ? trafficSignDataUrl(item.trafficSignCode) : item.heartFaceCode ? `/heart-faces/${item.heartFaceCode}.png` : item.flagCode ? `https://flagcdn.com/w160/${item.flagCode}.png` : "";
+          const imageSource = item.animatedFile ? animatedGifUrl(item.animatedFile) : item.trafficSignCode ? trafficSignDataUrl(item.trafficSignCode) : item.heartFaceCode ? `/heart-faces/${item.heartFaceCode}.png` : item.flagCode ? `https://flagcdn.com/w160/${item.flagCode}.png` : "";
           const favorite = favorites.includes(itemKey(item));
           return <article className={`emoji-card ${item.trafficSignCode ? "traffic-sign-card" : ""} ${item.heartFaceCode ? "heart-face-card" : ""} ${item.animation ? "animated-card" : ""}`} key={`${item.category}-${itemKey(item)}`}>
             <button className="emoji-copy-area" onClick={() => hasImage ? copyImage(item) : copyEmoji(item)} aria-label={`${hasImage ? t.copyImage : t.copy}: ${item.meaning[language]}`}>
