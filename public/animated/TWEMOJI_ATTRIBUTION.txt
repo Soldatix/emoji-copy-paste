@@ -1,0 +1,11 @@
+Twemoji artwork attribution
+
+The animated yellow face artwork in this directory is based on Twemoji
+graphics by Twitter and contributors.
+
+Source: https://github.com/twitter/twemoji
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+License URL: https://creativecommons.org/licenses/by/4.0/
+
+Modifications: the source SVG artwork was rasterized, resized and transformed
+into looping animated GIF files for the Emoji Copy & Paste application.

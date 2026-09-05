@@ -10,7 +10,9 @@ A free multilingual web app for finding emoji meanings and copying emojis instan
 
 ## Features
 
-- 261 curated emojis, custom heart faces and signs organized into eleven categories
+- 261 curated emojis, custom heart faces and signs organized into eleven standard categories
+- 20 downloadable animated GIFs in a separate Animated category (10 faces and 10 heart faces)
+- Mobile sharing for sending animated GIFs to apps such as WhatsApp, plus a static-image copy action
 - Search by emoji or meaning
 - English, Croatian, German, Italian and Spanish interface
 - Favorites, recently used emojis and multi-emoji collections
@@ -52,7 +54,9 @@ Production is deployed automatically from the `main` branch through Cloudflare.
 
 ## Notes
 
-Emoji appearance can vary by platform. Flag cards use FlagCDN images, traffic signs are rendered as vector graphics, and heart faces are original PNG artwork. All three can be copied into Word as images. The smaller Unicode copy action is shown only for traffic signs.
+Emoji appearance can vary by platform. Flag cards use FlagCDN images, traffic signs are rendered as vector graphics, and heart faces are original PNG artwork. All three can be copied into Word as images. Animated cards use real GIF files so their motion can be shared or downloaded, while the copy action intentionally places a static PNG image on the clipboard.
+
+The animated yellow face artwork is based on modified [Twemoji](https://github.com/twitter/twemoji) graphics by Twitter and contributors, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The source artwork was resized and transformed into looping GIF animations.
 
 The Swiss no-overtaking sign (2.44) is sourced from the Federal Roads Office (ASTRA/FEDRO) via Wikimedia Commons and is in the public domain.
 

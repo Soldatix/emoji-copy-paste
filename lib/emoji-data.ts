@@ -29,6 +29,8 @@ export type EmojiEntry = {
   heartFaceCode?: HeartFaceCode;
   animation?: AnimationId;
   animatedSource?: "smileys" | "hearts";
+  animatedFile?: string;
+  staticImageFile?: string;
 };
 
 const entry = (
@@ -309,11 +311,26 @@ const animationStyles: AnimationId[] = ["bounce", "pulse", "laugh", "sway", "kis
 const animatedSmileys: EmojiEntry[] = baseEmojis
   .filter((item) => item.category === "smileys")
   .slice(0, 10)
-  .map((item, index) => ({ ...item, id: `animated-smiley-${index + 1}`, category: "animated", animation: animationStyles[index], animatedSource: "smileys" }));
+  .map((item, index) => ({
+    ...item,
+    id: `animated-smiley-${index + 1}`,
+    category: "animated",
+    animation: animationStyles[index],
+    animatedSource: "smileys",
+    animatedFile: `face-${index + 1}.gif`,
+    staticImageFile: `face-${index + 1}.png`,
+  }));
 
 const animatedHearts: EmojiEntry[] = heartFaceEntries
   .slice(0, 10)
-  .map((item, index) => ({ ...item, id: `animated-${item.id}`, category: "animated", animation: animationStyles[(index + 3) % animationStyles.length], animatedSource: "hearts" }));
+  .map((item, index) => ({
+    ...item,
+    id: `animated-${item.id}`,
+    category: "animated",
+    animation: animationStyles[(index + 3) % animationStyles.length],
+    animatedSource: "hearts",
+    animatedFile: `heart-${item.heartFaceCode}.gif`,
+  }));
 
 export const emojis: EmojiEntry[] = [...baseEmojis, ...additionalEmojis, ...trafficSignEntries, ...heartFaceEntries, ...animatedSmileys, ...animatedHearts].sort(
   (a, b) => categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category),

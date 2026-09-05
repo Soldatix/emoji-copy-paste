@@ -111,27 +111,14 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
 .emoji-card:hover .flag-image { transform: scale(1.06); }
 .animated-card { border-color: color-mix(in srgb, #9d73f0 38%, var(--border)); background: linear-gradient(155deg, color-mix(in srgb, var(--card) 96%, transparent), color-mix(in srgb, #fff0f8 45%, var(--card))); }
 .dark .animated-card { background: linear-gradient(155deg, color-mix(in srgb, var(--card) 96%, transparent), color-mix(in srgb, #39214c 48%, var(--card))); }
-.animated-visual { transform-origin: center; will-change: transform, filter; animation-duration: 1.8s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
-.animation-bounce { animation-name: animated-bounce; }
-.animation-pulse { animation-name: animated-pulse; }
-.animation-laugh { animation-name: animated-laugh; }
-.animation-sway { animation-name: animated-sway; }
-.animation-kiss { animation-name: animated-kiss; }
-.animation-sparkle { animation-name: animated-sparkle; }
-.animation-float { animation-name: animated-float; }
-.animation-pop { animation-name: animated-pop; }
-.animation-nod { animation-name: animated-nod; }
-.animation-wobble { animation-name: animated-wobble; }
-@keyframes animated-bounce { 0%, 100% { transform: translateY(0) scale(1); } 42% { transform: translateY(-9px) scale(1.04); } 62% { transform: translateY(1px) scale(.98); } }
-@keyframes animated-pulse { 0%, 100% { transform: scale(1); } 45% { transform: scale(1.13); } 62% { transform: scale(1.04); } }
-@keyframes animated-laugh { 0%, 100% { transform: rotate(0) translateY(0); } 24% { transform: rotate(-7deg) translateY(-3px); } 48% { transform: rotate(7deg) translateY(1px); } 72% { transform: rotate(-4deg) translateY(-2px); } }
-@keyframes animated-sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(5deg); } }
-@keyframes animated-kiss { 0%, 100% { transform: scale(1) translateX(0); } 42% { transform: scale(1.1) translateX(4px); } 58% { transform: scale(1.06) translateX(7px); } }
-@keyframes animated-sparkle { 0%, 100% { transform: scale(1); filter: brightness(1) saturate(1); } 50% { transform: scale(1.09) rotate(3deg); filter: brightness(1.22) saturate(1.18); } }
-@keyframes animated-float { 0%, 100% { transform: translateY(3px); } 50% { transform: translateY(-8px); } }
-@keyframes animated-pop { 0%, 100% { transform: scale(1); } 25% { transform: scale(.92); } 48% { transform: scale(1.15); } 66% { transform: scale(1.02); } }
-@keyframes animated-nod { 0%, 100% { transform: translateY(0) rotate(0); } 38% { transform: translateY(5px) rotate(3deg); } 62% { transform: translateY(-2px) rotate(-2deg); } }
-@keyframes animated-wobble { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-5px) rotate(-5deg); } 50% { transform: translateX(4px) rotate(4deg); } 75% { transform: translateX(-2px) rotate(-2deg); } }
+.animated-card .emoji-copy-area { min-height: 184px; padding-bottom: 9px; }
+.animated-image-wrap { width: 100px; height: 90px; }
+.animated-image { width: 92px; max-height: 92px; border-radius: 0; box-shadow: none; object-fit: contain; filter: drop-shadow(0 7px 9px rgba(87, 51, 157, .18)); }
+.animation-actions { padding: 0 11px 12px; display: grid; grid-template-columns: minmax(0, 1fr) 38px; gap: 7px; }
+.animation-share, .animation-download { min-height: 37px; border: 1px solid color-mix(in srgb, #745be1 42%, var(--border)); border-radius: 11px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #fff; background: linear-gradient(135deg, #7b5de7, #d94687); font: inherit; font-size: 11px; font-weight: 800; cursor: pointer; transition: transform .16s ease, box-shadow .16s ease; }
+.animation-download { color: #654fd0; background: color-mix(in srgb, var(--card) 91%, #eee9ff); }
+.dark .animation-download { color: #c7baff; background: color-mix(in srgb, var(--card) 86%, #4b397c); }
+.animation-share:hover, .animation-download:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(89, 60, 175, .2); }
 .emoji-meaning { max-width: 210px; margin-top: 9px; color: var(--muted-foreground); font-size: 12px; line-height: 1.45; text-align: center; }
 .flag-code { color: var(--foreground); font-size: .92em; font-weight: 850; letter-spacing: .08em; white-space: nowrap; }
 .copy-prompt { margin-top: auto; padding-top: 11px; display: flex; align-items: center; gap: 5px; color: #6554d5; font-size: 11px; font-weight: 800; opacity: .72; }
@@ -170,6 +157,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
 .wallet-row button { border-radius: 9px; font-size: 11px; }
 
 footer { max-width: 1240px; margin: 42px auto 0; padding-top: 22px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; color: var(--muted-foreground); font-size: 12px; }
+footer a { color: inherit; text-underline-offset: 2px; }
 
 @media (max-width: 1050px) { .emoji-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 760px) {
@@ -177,8 +165,8 @@ footer { max-width: 1240px; margin: 42px auto 0; padding-top: 22px; border-top: 
   .header-actions { flex-wrap: wrap; justify-content: flex-end; }.info-button span { display: none; }.language-select { min-width: 119px; }
   .hero { margin: 35px auto 27px; }.hero p { font-size: 15px; }.search-wrap { height: 54px; }.search-input { height: 54px !important; }.search-icon { top: 16px; }
   .collection-panel { align-items: stretch; flex-direction: column; }.collection-actions button { flex: 1; }.results-heading { align-items: flex-start; flex-direction: column; }.device-note { text-align: left; }
-  .emoji-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }.emoji-card { border-radius: 17px; }.emoji-copy-area { min-height: 167px; padding: 15px 8px 31px; }.emoji-glyph { min-height: 63px; font-size: 46px; }.flag-image-wrap { width: 82px; height: 63px; }.flag-image { width: 76px; max-height: 52px; }.traffic-sign-image-wrap { height: 72px; }.traffic-sign-image { width: 68px; max-height: 68px; }.heart-face-image-wrap { width: 82px; height: 72px; }.heart-face-image { width: 76px; max-height: 76px; }.emoji-meaning { font-size: 10.5px; line-height: 1.4; }.copy-prompt { font-size: 0; }.copy-prompt svg { width: 15px; height: 15px; }
-  .payment-grid { grid-template-columns: 1fr; }.support-header { padding: 23px 20px 18px; }.support-scroll { padding: 18px 20px 24px; }.wallet-row { grid-template-columns: 45px minmax(0, 1fr) 38px; }.wallet-row button { width: 36px; padding: 0; font-size: 0; }.wallet-row button svg { margin: 0; }
+  .emoji-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }.emoji-card { border-radius: 17px; }.emoji-copy-area { min-height: 167px; padding: 15px 8px 31px; }.emoji-glyph { min-height: 63px; font-size: 46px; }.flag-image-wrap { width: 82px; height: 63px; }.flag-image { width: 76px; max-height: 52px; }.traffic-sign-image-wrap { height: 72px; }.traffic-sign-image { width: 68px; max-height: 68px; }.heart-face-image-wrap, .animated-image-wrap { width: 82px; height: 72px; }.heart-face-image, .animated-image { width: 76px; max-height: 76px; }.animated-card .emoji-copy-area { min-height: 164px; padding-bottom: 7px; }.animation-actions { padding: 0 8px 9px; grid-template-columns: minmax(0, 1fr) 35px; gap: 5px; }.animation-share, .animation-download { min-height: 35px; border-radius: 10px; font-size: 0; }.animation-share svg, .animation-download svg { width: 16px; height: 16px; }.emoji-meaning { font-size: 10.5px; line-height: 1.4; }.copy-prompt { font-size: 0; }.copy-prompt svg { width: 15px; height: 15px; }
+  .payment-grid { grid-template-columns: 1fr; }.support-header { padding: 23px 20px 18px; }.support-scroll { padding: 18px 20px 24px; }.wallet-row { grid-template-columns: 45px minmax(0, 1fr) 38px; }.wallet-row button { width: 36px; padding: 0; font-size: 0; }.wallet-row button svg { margin: 0; }footer { align-items: flex-start; flex-direction: column; gap: 7px; }
 }
 @media (max-width: 420px) {
   .emoji-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.emoji-copy-area { min-height: 174px; }.header-actions { gap: 6px; }.language-select { min-width: 112px; padding-left: 9px !important; padding-right: 9px !important; }
