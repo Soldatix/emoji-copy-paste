@@ -17,7 +17,8 @@ const languages: Array<{ id: Language; label: string; flag: string }> = [
   { id: "de", label: "Deutsch", flag: "🇩🇪" }, { id: "it", label: "Italiano", flag: "🇮🇹" },
   { id: "es", label: "Español", flag: "🇪🇸" },
 ];
-const categories: CategoryId[] = ["smileys", "people", "animals", "food", "activities", "travel", "objects", "symbols", "flags", "traffic", "hearts"];\nconst favoritesIcon = "⭐";
+const categories: CategoryId[] = ["smileys", "people", "animals", "food", "activities", "travel", "objects", "symbols", "flags", "traffic", "hearts"];
+const favoritesIcon = "⭐";
 
 const itemKey = (item: EmojiEntry) => item.id || item.emoji;
 
@@ -41,12 +42,15 @@ const svgDataUrlToPngBlob = async (source: string): Promise<Blob> => {
   return new Promise((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("PNG conversion failed")), "image/png"));
 };
 
-const resizePngBlob = async (source: Blob, width: number, height: number): Promise<Blob> => {
+const resizePngBlob = async (source: Blob, maxWidth: number): Promise<Blob> => {
   const objectUrl = URL.createObjectURL(source);
   try {
     const image = new Image();
     image.src = objectUrl;
     await image.decode();
+    const scale = Math.min(1, maxWidth / image.naturalWidth);
+    const width = Math.round(image.naturalWidth * scale);
+    const height = Math.round(image.naturalHeight * scale);
     const canvas = document.createElement("canvas");
     canvas.width = width; canvas.height = height;
     const context = canvas.getContext("2d");
@@ -191,22 +195,17 @@ export default function Home() {
         : `https://flagcdn.com/w320/${item.flagCode}.png`;
     try {
       let pngBlob: Blob;
-      const compactHeartImage = Boolean(item.heartFaceCode && window.matchMedia("(min-width: 768px)").matches);
-      const pastedImageWidth = compactHeartImage ? 240 : 320;
+      const compactImage = window.matchMedia("(min-width: 768px)").matches;
       if (item.trafficSignCode) {
         pngBlob = await svgDataUrlToPngBlob(imageUrl);
       } else {
         const response = await fetch(imageUrl, { mode: "cors", cache: "force-cache" });
         if (!response.ok) throw new Error("Image unavailable");
         pngBlob = await response.blob();
-        if (compactHeartImage) pngBlob = await resizePngBlob(pngBlob, pastedImageWidth, pastedImageWidth);
       }
-      const htmlSource = imageUrl.startsWith("/") ? new URL(imageUrl, window.location.origin).href : imageUrl;
-      const html = `<img src="${htmlSource}" alt="${item.meaning[language]}" width="${pastedImageWidth}">`;
+      if (compactImage) pngBlob = await resizePngBlob(pngBlob, 240);
       await navigator.clipboard.write([new ClipboardItem({
         "image/png": pngBlob,
-        "text/html": new Blob([html], { type: "text/html" }),
-        "text/plain": new Blob([item.emoji], { type: "text/plain" }),
       })]);
       rememberRecent(itemKey(item));
       toast.success(t.imageCopied);
@@ -261,7 +260,6 @@ export default function Home() {
               <span className="copy-prompt"><Copy size={14} /> {hasImage ? t.copyImage : t.copy}</span>
             </button>
             <div className="card-actions">
-              {item.trafficSignCode && <button className="mini-action" onClick={() => copyEmoji(item)} aria-label={t.copy} title={t.copy}><Copy size={15} /></button>}
               <button className={`mini-action ${favorite ? "is-favorite" : ""}`} onClick={() => toggleFavorite(item)} aria-label={t.favorites}><Heart size={17} fill={favorite ? "currentColor" : "none"} /></button>
               <button className="mini-action add-action" onClick={() => addToCollection(item.emoji)} aria-label={t.add}>+</button>
             </div>
