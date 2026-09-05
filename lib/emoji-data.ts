@@ -14,7 +14,10 @@ export type CategoryId =
   | "symbols"
   | "flags"
   | "traffic"
-  | "hearts";
+  | "hearts"
+  | "animated";
+
+export type AnimationId = "bounce" | "pulse" | "laugh" | "sway" | "kiss" | "sparkle" | "float" | "pop" | "nod" | "wobble";
 
 export type EmojiEntry = {
   id?: string;
@@ -24,6 +27,8 @@ export type EmojiEntry = {
   flagCode?: string;
   trafficSignCode?: TrafficSignCode;
   heartFaceCode?: HeartFaceCode;
+  animation?: AnimationId;
+  animatedSource?: "smileys" | "hearts";
 };
 
 const entry = (
@@ -58,6 +63,7 @@ export const categoryIcons: Record<CategoryId, string> = {
   flags: "🏁",
   traffic: "🚦",
   hearts: "❤️",
+  animated: "🎞️",
 };
 
 const baseEmojis: EmojiEntry[] = [
@@ -295,8 +301,20 @@ const categoryOrder: CategoryId[] = [
   "flags",
   "traffic",
   "hearts",
+  "animated",
 ];
 
-export const emojis: EmojiEntry[] = [...baseEmojis, ...additionalEmojis, ...trafficSignEntries, ...heartFaceEntries].sort(
+const animationStyles: AnimationId[] = ["bounce", "pulse", "laugh", "sway", "kiss", "sparkle", "float", "pop", "nod", "wobble"];
+
+const animatedSmileys: EmojiEntry[] = baseEmojis
+  .filter((item) => item.category === "smileys")
+  .slice(0, 10)
+  .map((item, index) => ({ ...item, id: `animated-smiley-${index + 1}`, category: "animated", animation: animationStyles[index], animatedSource: "smileys" }));
+
+const animatedHearts: EmojiEntry[] = heartFaceEntries
+  .slice(0, 10)
+  .map((item, index) => ({ ...item, id: `animated-${item.id}`, category: "animated", animation: animationStyles[(index + 3) % animationStyles.length], animatedSource: "hearts" }));
+
+export const emojis: EmojiEntry[] = [...baseEmojis, ...additionalEmojis, ...trafficSignEntries, ...heartFaceEntries, ...animatedSmileys, ...animatedHearts].sort(
   (a, b) => categoryOrder.indexOf(a.category) - categoryOrder.indexOf(b.category),
 );

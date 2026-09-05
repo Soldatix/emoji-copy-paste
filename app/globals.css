@@ -76,6 +76,10 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
 .category-button:hover { color: var(--foreground); transform: translateY(-2px); }
 .category-button.active { color: #fff; border-color: #6757e8; background: linear-gradient(135deg, #7664ee, #5c4bd2); box-shadow: 0 8px 20px rgba(93, 75, 210, .25); }
 .category-button span { font-size: 17px; }
+.animated-subfilters { margin: 1px 2px 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+.animated-subfilters button { min-height: 36px; padding: 7px 13px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted-foreground); background: color-mix(in srgb, var(--card) 88%, transparent); font: inherit; font-size: 12px; font-weight: 750; cursor: pointer; transition: color .18s ease, border-color .18s ease, background .18s ease, transform .18s ease; }
+.animated-subfilters button:hover { color: var(--foreground); transform: translateY(-1px); }
+.animated-subfilters button.active { color: #fff; border-color: #df397a; background: linear-gradient(135deg, #ed4d86, #7b55e8); box-shadow: 0 7px 17px rgba(166, 61, 151, .2); }
 
 .collection-panel { margin: 10px 0 20px; padding: 18px 20px; border: 1px solid #d8d0ff; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; background: linear-gradient(120deg, #faf8ff, #fff8da); box-shadow: 0 12px 35px rgba(68, 52, 128, .08); }
 .dark .collection-panel { border-color: #4d446f; background: linear-gradient(120deg, #221d3b, #31273c); }
@@ -105,6 +109,29 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
 .heart-face-image { width: 92px; max-height: 92px; border-radius: 0; box-shadow: none; filter: drop-shadow(0 7px 9px rgba(170, 15, 45, .2)); }
 .heart-face-card .flag-emoji-fallback { font-size: 34px; }
 .emoji-card:hover .flag-image { transform: scale(1.06); }
+.animated-card { border-color: color-mix(in srgb, #9d73f0 38%, var(--border)); background: linear-gradient(155deg, color-mix(in srgb, var(--card) 96%, transparent), color-mix(in srgb, #fff0f8 45%, var(--card))); }
+.dark .animated-card { background: linear-gradient(155deg, color-mix(in srgb, var(--card) 96%, transparent), color-mix(in srgb, #39214c 48%, var(--card))); }
+.animated-visual { transform-origin: center; will-change: transform, filter; animation-duration: 1.8s; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+.animation-bounce { animation-name: animated-bounce; }
+.animation-pulse { animation-name: animated-pulse; }
+.animation-laugh { animation-name: animated-laugh; }
+.animation-sway { animation-name: animated-sway; }
+.animation-kiss { animation-name: animated-kiss; }
+.animation-sparkle { animation-name: animated-sparkle; }
+.animation-float { animation-name: animated-float; }
+.animation-pop { animation-name: animated-pop; }
+.animation-nod { animation-name: animated-nod; }
+.animation-wobble { animation-name: animated-wobble; }
+@keyframes animated-bounce { 0%, 100% { transform: translateY(0) scale(1); } 42% { transform: translateY(-9px) scale(1.04); } 62% { transform: translateY(1px) scale(.98); } }
+@keyframes animated-pulse { 0%, 100% { transform: scale(1); } 45% { transform: scale(1.13); } 62% { transform: scale(1.04); } }
+@keyframes animated-laugh { 0%, 100% { transform: rotate(0) translateY(0); } 24% { transform: rotate(-7deg) translateY(-3px); } 48% { transform: rotate(7deg) translateY(1px); } 72% { transform: rotate(-4deg) translateY(-2px); } }
+@keyframes animated-sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(5deg); } }
+@keyframes animated-kiss { 0%, 100% { transform: scale(1) translateX(0); } 42% { transform: scale(1.1) translateX(4px); } 58% { transform: scale(1.06) translateX(7px); } }
+@keyframes animated-sparkle { 0%, 100% { transform: scale(1); filter: brightness(1) saturate(1); } 50% { transform: scale(1.09) rotate(3deg); filter: brightness(1.22) saturate(1.18); } }
+@keyframes animated-float { 0%, 100% { transform: translateY(3px); } 50% { transform: translateY(-8px); } }
+@keyframes animated-pop { 0%, 100% { transform: scale(1); } 25% { transform: scale(.92); } 48% { transform: scale(1.15); } 66% { transform: scale(1.02); } }
+@keyframes animated-nod { 0%, 100% { transform: translateY(0) rotate(0); } 38% { transform: translateY(5px) rotate(3deg); } 62% { transform: translateY(-2px) rotate(-2deg); } }
+@keyframes animated-wobble { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-5px) rotate(-5deg); } 50% { transform: translateX(4px) rotate(4deg); } 75% { transform: translateX(-2px) rotate(-2deg); } }
 .emoji-meaning { max-width: 210px; margin-top: 9px; color: var(--muted-foreground); font-size: 12px; line-height: 1.45; text-align: center; }
 .flag-code { color: var(--foreground); font-size: .92em; font-weight: 850; letter-spacing: .08em; white-space: nowrap; }
 .copy-prompt { margin-top: auto; padding-top: 11px; display: flex; align-items: center; gap: 5px; color: #6554d5; font-size: 11px; font-weight: 800; opacity: .72; }
