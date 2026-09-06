@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en" suppressHydrationWarning><body><Providers>{children}</Providers><script src="https://appsandgames.org/assets/apps-games-info-standard.js" defer /></body></html>;
+  return <html lang="en" suppressHydrationWarning><body><Providers>{children}</Providers></body></html>;
 }
