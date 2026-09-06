@@ -3,7 +3,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 const appUrl = "https://emoji.appsandgames.org/";
-const socialImage = "https://appsandgames.org/assets/logo/apps-and-games-logo.png";
+const socialImage = "https://appsandgames.org/assets/social/emoji-copy-paste.jpg";
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
@@ -27,6 +27,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: socialImage,
+        width: 1200,
+        height: 630,
         alt: "Apps & Games — Emoji Copy & Paste",
       },
     ],
@@ -45,6 +47,7 @@ const structuredData = {
   "@type": "WebApplication",
   name: "Emoji Copy & Paste",
   url: appUrl,
+  image: socialImage,
   description:
     "A free multilingual browser app for finding emoji meanings, country flags and common traffic signs and copying them instantly.",
   applicationCategory: "UtilitiesApplication",
