@@ -327,6 +327,52 @@ function CategoryButton({ active, onClick, icon, label }: { active: boolean; onC
 
 function InfoDialog({ language }: { language: Language }) {
   const t = ui[language];
+  const paymentUi = {
+    en: { paypalDesc: "Pay securely with PayPal or other payment options offered by PayPal Checkout.", stripeDesc: "Pay securely by card or with payment methods available through Stripe Checkout.", cards: "Debit / Credit Card", wallets: "Digital wallets", paypalBtn: "Donate with PayPal ↗", stripeBtn: "Donate with Stripe ↗", availability: "Available payment methods can vary by country, device and payment provider.", copy: "Copy" },
+    hr: { paypalDesc: "Platite sigurno putem PayPala ili drugim načinima plaćanja koje nudi PayPal Checkout.", stripeDesc: "Platite sigurno karticom ili načinima plaćanja dostupnima putem Stripe Checkouta.", cards: "Debitna / kreditna kartica", wallets: "Digitalni novčanici", paypalBtn: "Doniraj putem PayPala ↗", stripeBtn: "Doniraj putem Stripea ↗", availability: "Dostupni načini plaćanja mogu se razlikovati ovisno o državi, uređaju i pružatelju plaćanja.", copy: "Kopiraj" },
+    de: { paypalDesc: "Sicher mit PayPal oder weiteren von PayPal Checkout angebotenen Zahlungsmethoden bezahlen.", stripeDesc: "Sicher per Karte oder mit den über Stripe Checkout verfügbaren Zahlungsmethoden bezahlen.", cards: "Debit- / Kreditkarte", wallets: "Digitale Wallets", paypalBtn: "Mit PayPal spenden ↗", stripeBtn: "Mit Stripe spenden ↗", availability: "Verfügbare Zahlungsmethoden können je nach Land, Gerät und Zahlungsanbieter variieren.", copy: "Kopieren" },
+    it: { paypalDesc: "Paga in modo sicuro con PayPal o con gli altri metodi disponibili tramite PayPal Checkout.", stripeDesc: "Paga in modo sicuro con carta o con i metodi disponibili tramite Stripe Checkout.", cards: "Carta di debito / credito", wallets: "Portafogli digitali", paypalBtn: "Dona con PayPal ↗", stripeBtn: "Dona con Stripe ↗", availability: "I metodi di pagamento disponibili possono variare in base al Paese, al dispositivo e al fornitore di pagamento.", copy: "Copia" },
+    es: { paypalDesc: "Paga de forma segura con PayPal u otros métodos disponibles mediante PayPal Checkout.", stripeDesc: "Paga de forma segura con tarjeta o con los métodos disponibles mediante Stripe Checkout.", cards: "Tarjeta de débito / crédito", wallets: "Carteras digitales", paypalBtn: "Donar con PayPal ↗", stripeBtn: "Donar con Stripe ↗", availability: "Los métodos de pago disponibles pueden variar según el país, el dispositivo y el proveedor de pago.", copy: "Copiar" },
+  } as const;
+  const p = paymentUi[language] || paymentUi.en;
   const copyAddress = async (currency: string, address: string) => { await copyText(address); toast.success(`${currency} ${t.addressCopied}`); };
-  return <Dialog><DialogTrigger asChild><Button className="info-button" variant="outline"><Info /> <span>{t.info}</span></Button></DialogTrigger><DialogContent className="support-dialog"><DialogHeader className="support-header"><div className="support-kicker"><Info size={16} /> INFO & SUPPORT</div><DialogTitle>{t.supportTitle}</DialogTitle><DialogDescription>{t.supportIntro}</DialogDescription></DialogHeader><div className="support-scroll"><p className="charity-copy">{t.charity}</p><h3>{t.donateTo}</h3><div className="payment-grid"><article className="payment-card paypal-card"><div className="payment-logo">P</div><div><h4>{t.paypal}</h4><p>{t.paypalText}</p></div><a className="payment-link" href="https://www.paypal.com/ncp/payment/RU2CWCNVQ7XD6" target="_blank" rel="noreferrer">{t.openPaypal} ↗</a></article><article className="payment-card stripe-card"><div className="payment-logo">$</div><div><h4>{t.stripe}</h4><p>{t.stripeText}</p></div><a className="payment-link" href="https://buy.stripe.com/7sYeVd7Blfe89cm0k02kw00" target="_blank" rel="noreferrer">{t.openStripe} ↗</a></article></div><div className="crypto-heading"><div className="crypto-icon">₿</div><div><h3>{t.crypto}</h3><p>{t.cryptoText}</p></div></div><div className="wallet-list">{cryptoWallets.map(([currency, address]) => <div className="wallet-row" key={currency}><span className="currency">{currency}</span><code>{address}</code><Button variant="outline" size="sm" onClick={() => copyAddress(currency, address)}><Copy /> Copy</Button></div>)}</div></div></DialogContent></Dialog>;
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="info-button" variant="outline"><Info /> <span>{t.info}</span></Button>
+      </DialogTrigger>
+      <DialogContent className="support-dialog">
+        <DialogHeader className="support-header">
+          <div className="support-kicker"><Info size={16} /> INFO & SUPPORT</div>
+          <DialogTitle>{t.supportTitle}</DialogTitle>
+          <DialogDescription>{t.supportIntro}</DialogDescription>
+        </DialogHeader>
+        <div className="support-scroll">
+          <p className="charity-copy">{t.charity}</p>
+          <h3>{t.donateTo}</h3>
+
+          <div className="payment-grid">
+            <article className="payment-card paypal-card">
+              <div className="payment-brand"><span className="payment-symbol">P</span><h4>PayPal</h4></div>
+              <p>{p.paypalDesc}</p>
+              <div className="payment-badges"><span>PayPal</span><span>{p.cards}</span><span>Apple Pay</span></div>
+              <a className="payment-action" href="https://www.paypal.com/ncp/payment/RU2CWCNVQ7XD6" target="_blank" rel="noreferrer">{p.paypalBtn}</a>
+            </article>
+
+            <article className="payment-card stripe-card">
+              <div className="payment-brand"><span className="payment-symbol">S</span><h4>Stripe</h4></div>
+              <p>{p.stripeDesc}</p>
+              <div className="payment-badges"><span>{p.cards}</span><span>Link</span><span>{p.wallets}</span></div>
+              <a className="payment-action" href="https://buy.stripe.com/7sYeVd7Blfe89cm0k02kw00" target="_blank" rel="noreferrer">{p.stripeBtn}</a>
+            </article>
+          </div>
+          <p className="payment-availability">{p.availability}</p>
+
+          <div className="crypto-heading"><div className="crypto-icon">₿</div><div><h3>{t.crypto}</h3><p>{t.cryptoText}</p></div></div>
+          <div className="wallet-list">{cryptoWallets.map(([currency, address]) => <div className="wallet-row" key={currency}><span className="currency">{currency}</span><code>{address}</code><Button variant="outline" size="sm" onClick={() => copyAddress(currency, address)}><Copy /> {p.copy}</Button></div>)}</div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 }

@@ -159,6 +159,22 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
 footer { max-width: 1240px; margin: 42px auto 0; padding-top: 22px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; color: var(--muted-foreground); font-size: 12px; }
 footer a { color: inherit; text-underline-offset: 2px; }
 
+
+/* payment-standard-v2: Apps & Games Info standard */
+.payment-standard-v2 { display: none; }
+.payment-card { display: flex; flex-direction: column; min-width: 0; padding: 17px; gap: 0; border: 1px solid var(--border); border-radius: 17px; background: color-mix(in srgb, var(--card) 96%, var(--secondary)); }
+.payment-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.payment-brand h4 { margin: 0; font-size: 15px; }
+.payment-symbol { width: 42px; height: 42px; flex: 0 0 42px; display: grid; place-items: center; border-radius: 12px; color: #1484e8; background: color-mix(in srgb, #1594ff 10%, var(--card)); border: 1px solid color-mix(in srgb, #1594ff 34%, var(--border)); font-weight: 900; }
+.stripe-card .payment-symbol { color: #d89b00; background: color-mix(in srgb, #ffd54b 12%, var(--card)); border-color: color-mix(in srgb, #ffd54b 45%, var(--border)); }
+.payment-card > p { margin: 0; color: var(--muted-foreground); font-size: 12px; line-height: 1.5; }
+.payment-badges { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 16px; }
+.payment-badges span { min-height: 27px; display: inline-flex; align-items: center; padding: 4px 9px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted-foreground); background: var(--muted); font-size: 10.5px; font-weight: 800; }
+.payment-action { min-height: 44px; margin-top: auto; padding: 10px 12px; display: flex; align-items: center; justify-content: center; border-radius: 11px; color: #07101b; background: linear-gradient(90deg,#54e8ff,#4da3ff); font-size: 12px; font-weight: 900; text-align: center; text-decoration: none; transition: filter .18s ease, transform .18s ease; }
+.stripe-card .payment-action { background: linear-gradient(90deg,#ffe45c,#ffb84d); }
+.payment-action:hover { filter: brightness(1.04); transform: translateY(-1px); }
+.payment-availability { margin: 12px 1px 24px; color: var(--muted-foreground); font-size: 11px; line-height: 1.5; }
+
 @media (max-width: 1050px) { .emoji-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 760px) {
   .emoji-app { padding: 0 14px 26px; }.app-header { height: auto; min-height: 70px; padding: 12px 0; align-items: flex-start; }.brand { padding-top: 2px; font-size: 0; }.brand-mark { width: 42px; height: 42px; }
