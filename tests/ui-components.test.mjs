@@ -67,7 +67,7 @@ test("emits chart themes for the starter's media dark mode", async () => {
     }),
   );
 
-  assert.match(html, /[data-chart=contract]/);
+  assert.match(html, /\[data-chart=contract\]/);
   assert.match(html, /@media \(prefers-color-scheme: dark\)/);
   assert.doesNotMatch(html, /\.dark/);
 });
