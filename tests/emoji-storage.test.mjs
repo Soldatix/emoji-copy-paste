@@ -364,3 +364,48 @@ test("startup recovery restores a pending interrupted backup transaction", () =>
   assertOldStoredState(storage);
 });
 
+test("backup restore persists all fields and clears its transaction journal", () => {
+  const storage = memoryStorage(oldStoredState);
+
+  assert.equal(restoreEmojiBackup(storage, replacementBackup), "persisted");
+  assert.equal(storage.read(STORAGE_KEYS.language), "de");
+  assert.equal(
+    storage.read(STORAGE_KEYS.favorites),
+    JSON.stringify(["new-favorite"]),
+  );
+  assert.equal(
+    storage.read(STORAGE_KEYS.recent),
+    JSON.stringify(["new-recent"]),
+  );
+  assert.equal(storage.read("emoji-restore-journal"), undefined);
+});
+
+test("startup recovery keeps successful data from a committed transaction", () => {
+  const storage = memoryStorage({
+    "emoji-language": "de",
+    "emoji-favorites": JSON.stringify(["new-favorite"]),
+    "emoji-recent": JSON.stringify(["new-recent"]),
+    "emoji-restore-journal": JSON.stringify({
+      version: 1,
+      status: "committed",
+      previous: {
+        language: "hr",
+        favorites: JSON.stringify(["old-favorite"]),
+        recent: JSON.stringify(["old-recent"]),
+      },
+    }),
+  });
+
+  assert.equal(recoverInterruptedRestore(storage), true);
+  assert.equal(storage.read(STORAGE_KEYS.language), "de");
+  assert.equal(
+    storage.read(STORAGE_KEYS.favorites),
+    JSON.stringify(["new-favorite"]),
+  );
+  assert.equal(
+    storage.read(STORAGE_KEYS.recent),
+    JSON.stringify(["new-recent"]),
+  );
+  assert.equal(storage.read("emoji-restore-journal"), undefined);
+});
+
