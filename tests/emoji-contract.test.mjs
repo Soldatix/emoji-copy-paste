@@ -1,13 +1,30 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import test, { after } from "node:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const projectRoot = join(__dirname, "..");
+import { createServer } from "vite";
+
+const projectRoot = fileURLToPath(new URL("..", import.meta.url));
 const pageSource = readFileSync(join(projectRoot, "app/page.tsx"), "utf8");
-const dataSource = readFileSync(join(projectRoot, "lib/emoji-data.ts"), "utf8");
+
+const vite = await createServer({
+  appType: "custom",
+  configFile: false,
+  root: projectRoot,
+  resolve: { alias: { "@": projectRoot } },
+  server: { middlewareMode: true },
+});
+
+after(async () => {
+  await vite.close();
+});
+
+async function loadEmojiCatalog() {
+  const { emojis } = await vite.ssrLoadModule("/lib/emoji-data.ts");
+  return emojis;
+}
 
 test("app/page.tsx contains all five language IDs", () => {
   const languagesBlock = pageSource.match(
@@ -81,19 +98,28 @@ test("collection functionality is present", () => {
   assert.match(pageSource, /setCollection\(\[\]\)/);
 });
 
-test("lib/emoji-data.ts maintains animated categories and item counts", () => {
-  assert.match(
-    dataSource,
-    /const animatedSmileys:[\s\S]*?\.slice\(0,\s*10\)\s*\.map/,
+test("exported emoji catalog contains exactly 10 animated smileys and 10 animated hearts", async () => {
+  const emojis = await loadEmojiCatalog();
+  const animatedSmileys = emojis.filter(
+    (item) =>
+      item.category === "animated" && item.animatedSource === "smileys",
   );
-  assert.match(
-    dataSource,
-    /const animatedHearts:[\s\S]*?\.slice\(0,\s*10\)\s*\.map/,
+  const animatedHearts = emojis.filter(
+    (item) =>
+      item.category === "animated" && item.animatedSource === "hearts",
   );
+
+  assert.equal(animatedSmileys.length, 10);
+  assert.equal(animatedHearts.length, 10);
 });
 
-test("emoji data includes required categories", () => {
-  assert.match(dataSource, /["']traffic["']/);
-  assert.match(dataSource, /["']hearts["']/);
-  assert.match(dataSource, /["']animated["']/);
+test("exported emoji catalog includes traffic, hearts and animated categories", async () => {
+  const emojis = await loadEmojiCatalog();
+
+  for (const category of ["traffic", "hearts", "animated"]) {
+    assert.ok(
+      emojis.some((item) => item.category === category),
+      `Exported catalog should include category ${category}`,
+    );
+  }
 });
