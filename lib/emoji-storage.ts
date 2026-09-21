@@ -144,3 +144,11 @@ export function parseEmojiBackup(value: unknown): EmojiBackupV1 | null {
     recent: normalizeList(candidate.recent, 18),
   };
 }
+
+export function parseEmojiBackupJson(text: string): EmojiBackupV1 | null {
+  try {
+    return parseEmojiBackup(JSON.parse(text));
+  } catch {
+    return null;
+  }
+}
