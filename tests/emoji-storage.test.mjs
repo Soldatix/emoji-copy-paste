@@ -24,6 +24,7 @@ const {
   loadLanguage,
   loadStoredList,
   parseEmojiBackup,
+  parseEmojiBackupJson,
   saveLanguage,
   saveStoredList,
 } = storageModule;
@@ -195,3 +196,77 @@ test("backup parsing validates schema and normalizes lists", () => {
     },
   );
 });
+
+test("stored lists reject valid JSON with a non-array value", () => {
+  assert.deepEqual(
+    loadStoredList(
+      memoryStorage({ "emoji-favorites": JSON.stringify({ value: "😀" }) }),
+      STORAGE_KEYS.favorites,
+    ),
+    [],
+  );
+});
+
+test("backup parsing rejects missing and wrong-type fields", () => {
+  assert.equal(
+    parseEmojiBackup({
+      version: 1,
+      language: "en",
+      favorites: [],
+    }),
+    null,
+  );
+  assert.equal(
+    parseEmojiBackup({
+      version: 1,
+      language: "en",
+      favorites: "😀",
+      recent: [],
+    }),
+    null,
+  );
+  assert.equal(
+    parseEmojiBackup({
+      version: 1,
+      language: "en",
+      favorites: [],
+      recent: "😀",
+    }),
+    null,
+  );
+});
+
+test("backup parsing caps recent entries at 18", () => {
+  const recent = Array.from({ length: 25 }, (_, index) => `recent-${index}`);
+  const backup = parseEmojiBackup({
+    version: 1,
+    language: "hr",
+    favorites: [],
+    recent,
+  });
+
+  assert.ok(backup);
+  assert.equal(backup.recent.length, 18);
+  assert.deepEqual(backup.recent, recent.slice(0, 18));
+});
+
+test("JSON backup parser accepts valid JSON and rejects malformed JSON", () => {
+  assert.deepEqual(
+    parseEmojiBackupJson(
+      JSON.stringify({
+        version: 1,
+        language: "de",
+        favorites: ["😀", "😀"],
+        recent: ["a", "b"],
+      }),
+    ),
+    {
+      version: 1,
+      language: "de",
+      favorites: ["😀"],
+      recent: ["a", "b"],
+    },
+  );
+  assert.equal(parseEmojiBackupJson("{bad json"), null);
+});
+
