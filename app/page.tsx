@@ -155,6 +155,7 @@ export default function Home() {
   const [ready, setReady] = useState(false);
   const [categoryScroll, setCategoryScroll] = useState({ left: false, right: false });
   const categoryStripRef = useRef<HTMLElement>(null);
+  const storageDisabledRef = useRef(false);
   const { resolvedTheme, setTheme } = useTheme();
   const t = ui[language];
 
@@ -162,7 +163,12 @@ export default function Home() {
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const storage = getBrowserStorage();
-    recoverInterruptedRestore(storage);
+    if (!storage || !recoverInterruptedRestore(storage)) {
+      storageDisabledRef.current = true;
+      setReady(true);
+      return;
+    }
+
     setLanguage(loadLanguage(storage));
     setFavorites(loadStoredList(storage, STORAGE_KEYS.favorites));
     setRecent(loadStoredList(storage, STORAGE_KEYS.recent, 18));
@@ -171,7 +177,7 @@ export default function Home() {
   /* eslint-enable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!ready) return;
-    saveLanguage(getBrowserStorage(), language);
+    saveLanguage(storageDisabledRef.current ? null : getBrowserStorage(), language);
     document.documentElement.lang = language;
   }, [language, ready]);
   useEffect(() => {
@@ -205,7 +211,7 @@ export default function Home() {
     });
   }, [activeCategory, animatedFilter, favorites, language, query, recent]);
 
-  const rememberRecent = (key: string) => { const updated = [key, ...recent.filter((item) => item !== key)].slice(0, 18); setRecent(updated); saveStoredList(getBrowserStorage(), STORAGE_KEYS.recent, updated, 18); };
+  const rememberRecent = (key: string) => { const updated = [key, ...recent.filter((item) => item !== key)].slice(0, 18); setRecent(updated); saveStoredList(storageDisabledRef.current ? null : getBrowserStorage(), STORAGE_KEYS.recent, updated, 18); };
   const copyEmoji = async (item: EmojiEntry) => { await copyText(item.emoji); rememberRecent(itemKey(item)); toast.success(`${item.emoji} ${t.copied}`); };
   const copyImage = async (item: EmojiEntry) => {
     if (!item.flagCode && !item.trafficSignCode && !item.heartFaceCode && !item.staticImageFile) return copyEmoji(item);
@@ -268,12 +274,18 @@ export default function Home() {
       downloadAnimation(item);
     }
   };
-  const toggleFavorite = (item: EmojiEntry) => { const key = itemKey(item); const exists = favorites.includes(key); const updated = exists ? favorites.filter((favorite) => favorite !== key) : [...favorites, key]; setFavorites(updated); saveStoredList(getBrowserStorage(), STORAGE_KEYS.favorites, updated); toast(exists ? t.favoriteRemoved : t.favoriteAdded); };
+  const toggleFavorite = (item: EmojiEntry) => { const key = itemKey(item); const exists = favorites.includes(key); const updated = exists ? favorites.filter((favorite) => favorite !== key) : [...favorites, key]; setFavorites(updated); saveStoredList(storageDisabledRef.current ? null : getBrowserStorage(), STORAGE_KEYS.favorites, updated); toast(exists ? t.favoriteRemoved : t.favoriteAdded); };
   const addToCollection = (emoji: string) => { setCollection((current) => [...current, emoji]); toast(t.added); };
-  const copyCollection = async () => { await copyText(collection.join("")); const keys = [...collection].reverse().map((value) => itemKey(emojis.find((item) => item.emoji === value) || { emoji: value } as EmojiEntry)); const updated = [...new Set([keys, recent].flat())].slice(0, 18); setRecent(updated); saveStoredList(getBrowserStorage(), STORAGE_KEYS.recent, updated, 18); toast.success(t.collectionCopied); };
+  const copyCollection = async () => { await copyText(collection.join("")); const keys = [...collection].reverse().map((value) => itemKey(emojis.find((item) => item.emoji === value) || { emoji: value } as EmojiEntry)); const updated = [...new Set([keys, recent].flat())].slice(0, 18); setRecent(updated); saveStoredList(storageDisabledRef.current ? null : getBrowserStorage(), STORAGE_KEYS.recent, updated, 18); toast.success(t.collectionCopied); };
   const restoreBackup = (backup: EmojiBackupV1): BackupRestoreStatus => {
-    const status = restoreEmojiBackup(getBrowserStorage(), backup);
-    if (status === "failed") return status;
+    const storage = storageDisabledRef.current ? null : getBrowserStorage();
+    const status = restoreEmojiBackup(storage, backup);
+
+    if (status === "failed") {
+      storageDisabledRef.current = true;
+      return status;
+    }
+    if (status === "unavailable") storageDisabledRef.current = true;
 
     setLanguage(backup.language);
     setFavorites([...backup.favorites]);
@@ -400,7 +412,7 @@ function InfoDialog({
       const restoreStatus = onRestoreBackup(backup);
       if (restoreStatus === "persisted") toast.success(t.backupImported);
       else if (restoreStatus === "unavailable") toast.warning(t.backupPersistWarning);
-      else toast.error(t.backupRestoreFailed);
+      else if (restoreStatus === "failed") toast.error(t.backupRestoreFailed);
     } catch {
       toast.error(t.backupInvalid);
     } finally {
