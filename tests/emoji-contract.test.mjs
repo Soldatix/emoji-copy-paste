@@ -80,10 +80,13 @@ test("favorites and recent virtual views are wired", () => {
   assert.match(pageSource, /setActiveCategory\("recent"\)/);
 });
 
-test("persistent localStorage keys are present", () => {
-  assert.match(pageSource, /["']emoji-language["']/);
-  assert.match(pageSource, /["']emoji-favorites["']/);
-  assert.match(pageSource, /["']emoji-recent["']/);
+test("persistent localStorage keys are stable", async () => {
+  const { STORAGE_KEYS } = await vite.ssrLoadModule("/lib/emoji-storage.ts");
+  assert.deepEqual(STORAGE_KEYS, {
+    language: "emoji-language",
+    favorites: "emoji-favorites",
+    recent: "emoji-recent",
+  });
 });
 
 test("core copy/share/download capabilities are wired", () => {
