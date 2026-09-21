@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toaster } from "@/components/ui/sonner";
 import { categoryIcons, emojis, type CategoryId, type EmojiEntry, type Language } from "@/lib/emoji-data";
+import { getBrowserStorage, loadLanguage, loadStoredList, saveLanguage, saveStoredList, STORAGE_KEYS } from "@/lib/emoji-storage";
 import { trafficSignDataUrl } from "@/lib/traffic-signs";
 
 const languages: Array<{ id: Language; label: string; flag: string }> = [
@@ -138,7 +139,6 @@ const cryptoWallets = [
   ["LTC", "LWtaFniqdYpv2xJtqo9WqDwCsQ2cW6PYWi"], ["RVN", "RAtXzKZyB3awfq2u2cK8YppC9kJamU5tPQ"],
 ] as const;
 
-function loadList(key: string): string[] { try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; } }
 
 export default function Home() {
   const [language, setLanguage] = useState<Language>("en");
@@ -157,12 +157,18 @@ export default function Home() {
   /* Persisted preferences are intentionally hydrated only after the client mounts. */
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("emoji-language") as Language | null;
-    if (savedLanguage && languages.some((item) => item.id === savedLanguage)) setLanguage(savedLanguage);
-    setFavorites(loadList("emoji-favorites")); setRecent(loadList("emoji-recent")); setReady(true);
+    const storage = getBrowserStorage();
+    setLanguage(loadLanguage(storage));
+    setFavorites(loadStoredList(storage, STORAGE_KEYS.favorites));
+    setRecent(loadStoredList(storage, STORAGE_KEYS.recent, 18));
+    setReady(true);
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
-  useEffect(() => { if (ready) { localStorage.setItem("emoji-language", language); document.documentElement.lang = language; } }, [language, ready]);
+  useEffect(() => {
+    if (!ready) return;
+    saveLanguage(getBrowserStorage(), language);
+    document.documentElement.lang = language;
+  }, [language, ready]);
   useEffect(() => {
     const strip = categoryStripRef.current;
     if (!strip) return;
@@ -194,7 +200,7 @@ export default function Home() {
     });
   }, [activeCategory, animatedFilter, favorites, language, query, recent]);
 
-  const rememberRecent = (key: string) => { const updated = [key, ...recent.filter((item) => item !== key)].slice(0, 18); setRecent(updated); localStorage.setItem("emoji-recent", JSON.stringify(updated)); };
+  const rememberRecent = (key: string) => { const updated = [key, ...recent.filter((item) => item !== key)].slice(0, 18); setRecent(updated); saveStoredList(getBrowserStorage(), STORAGE_KEYS.recent, updated, 18); };
   const copyEmoji = async (item: EmojiEntry) => { await copyText(item.emoji); rememberRecent(itemKey(item)); toast.success(`${item.emoji} ${t.copied}`); };
   const copyImage = async (item: EmojiEntry) => {
     if (!item.flagCode && !item.trafficSignCode && !item.heartFaceCode && !item.staticImageFile) return copyEmoji(item);
@@ -257,9 +263,9 @@ export default function Home() {
       downloadAnimation(item);
     }
   };
-  const toggleFavorite = (item: EmojiEntry) => { const key = itemKey(item); const exists = favorites.includes(key); const updated = exists ? favorites.filter((favorite) => favorite !== key) : [...favorites, key]; setFavorites(updated); localStorage.setItem("emoji-favorites", JSON.stringify(updated)); toast(exists ? t.favoriteRemoved : t.favoriteAdded); };
+  const toggleFavorite = (item: EmojiEntry) => { const key = itemKey(item); const exists = favorites.includes(key); const updated = exists ? favorites.filter((favorite) => favorite !== key) : [...favorites, key]; setFavorites(updated); saveStoredList(getBrowserStorage(), STORAGE_KEYS.favorites, updated); toast(exists ? t.favoriteRemoved : t.favoriteAdded); };
   const addToCollection = (emoji: string) => { setCollection((current) => [...current, emoji]); toast(t.added); };
-  const copyCollection = async () => { await copyText(collection.join("")); const keys = [...collection].reverse().map((value) => itemKey(emojis.find((item) => item.emoji === value) || { emoji: value } as EmojiEntry)); const updated = [...new Set([keys, recent].flat())].slice(0, 18); setRecent(updated); localStorage.setItem("emoji-recent", JSON.stringify(updated)); toast.success(t.collectionCopied); };
+  const copyCollection = async () => { await copyText(collection.join("")); const keys = [...collection].reverse().map((value) => itemKey(emojis.find((item) => item.emoji === value) || { emoji: value } as EmojiEntry)); const updated = [...new Set([keys, recent].flat())].slice(0, 18); setRecent(updated); saveStoredList(getBrowserStorage(), STORAGE_KEYS.recent, updated, 18); toast.success(t.collectionCopied); };
 
   return (
     <main className="emoji-app">
