@@ -93,8 +93,9 @@ test("JSON backup UI is wired to validated backup helpers", () => {
   assert.match(pageSource, /createEmojiBackup\(\{\s*language,\s*favorites,\s*recent\s*\}\)/);
   assert.match(pageSource, /parseEmojiBackupJson\(await file\.text\(\)\)/);
   assert.match(pageSource, /onRestoreBackup\(backup\)/);
-  assert.match(pageSource, /restoreEmojiBackup\(getBrowserStorage\(\), backup\)/);
+  assert.match(pageSource, /restoreEmojiBackup\(storage, backup\)/);
   assert.match(pageSource, /recoverInterruptedRestore\(storage\)/);
+  assert.match(pageSource, /storageDisabledRef\.current = true/);
   assert.match(pageSource, /restoreStatus === "failed"/);
   assert.match(pageSource, /accept="application\/json,\.json"/);
 });
