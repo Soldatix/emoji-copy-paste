@@ -89,6 +89,13 @@ test("persistent localStorage keys are stable", async () => {
   });
 });
 
+test("JSON backup UI is wired to validated backup helpers", () => {
+  assert.match(pageSource, /createEmojiBackup\(\{\s*language,\s*favorites,\s*recent\s*\}\)/);
+  assert.match(pageSource, /parseEmojiBackupJson\(await file\.text\(\)\)/);
+  assert.match(pageSource, /onRestoreBackup\(backup\)/);
+  assert.match(pageSource, /accept="application\/json,\.json"/);
+});
+
 test("core copy/share/download capabilities are wired", () => {
   assert.match(pageSource, /navigator\.clipboard/);
   assert.match(pageSource, /navigator\.share/);
