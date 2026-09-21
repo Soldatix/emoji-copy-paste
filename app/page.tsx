@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Clipboard, Copy, Download, Heart, Info, Moon, Search, Share2, Sparkles, Sun, Trash2, X, Zap } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { ChevronLeft, ChevronRight, Clipboard, Copy, Download, Heart, Info, Moon, Search, Share2, Sparkles, Sun, Trash2, Upload, X, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toaster } from "@/components/ui/sonner";
 import { categoryIcons, emojis, type CategoryId, type EmojiEntry, type Language } from "@/lib/emoji-data";
-import { getBrowserStorage, loadLanguage, loadStoredList, saveLanguage, saveStoredList, STORAGE_KEYS } from "@/lib/emoji-storage";
+import { createEmojiBackup, getBrowserStorage, loadLanguage, loadStoredList, parseEmojiBackupJson, saveLanguage, saveStoredList, STORAGE_KEYS, type EmojiBackupV1 } from "@/lib/emoji-storage";
 import { trafficSignDataUrl } from "@/lib/traffic-signs";
 
 const languages: Array<{ id: Language; label: string; flag: string }> = [
@@ -84,6 +84,8 @@ const ui = {
     stripe: "Card Payment (Stripe)", stripeText: "Donate securely using your credit or debit card.", openStripe: "Open Stripe",
     crypto: "Crypto Wallet", cryptoText: "You can also support the project using cryptocurrency.", addressCopied: "address copied!",
     appearanceNote: "Emoji appearance may vary slightly between devices and apps.",
+    backupTitle: "Data backup", backupIntro: "Save your language, favorites and recent emojis to a JSON file, or restore them later.", exportBackup: "Export JSON", importBackup: "Import JSON",
+    backupExported: "Backup downloaded.", backupImported: "Backup restored.", backupInvalid: "This backup file is not valid.", backupExportFailed: "The backup could not be created.", backupPersistWarning: "Backup restored for this session, but browser storage is unavailable.",
   },
   hr: {
     eyebrow: "Besplatna online aplikacija", title: "Emoji Copy & Paste", subtitle: "Pronađite pravi emoji, saznajte njegovo značenje i odmah ga kopirajte.",
@@ -101,6 +103,8 @@ const ui = {
     stripe: "Kartično plaćanje (Stripe)", stripeText: "Donirajte sigurno kreditnom ili debitnom karticom.", openStripe: "Otvori Stripe",
     crypto: "Kripto novčanik", cryptoText: "Projekt možete podržati i kriptovalutama.", addressCopied: "adresa kopirana!",
     appearanceNote: "Izgled emojija može se malo razlikovati između uređaja i aplikacija.",
+    backupTitle: "Sigurnosna kopija podataka", backupIntro: "Spremite jezik, omiljene i nedavno korištene emojije u JSON datoteku ili ih kasnije vratite.", exportBackup: "Izvezi JSON", importBackup: "Uvezi JSON",
+    backupExported: "Sigurnosna kopija je preuzeta.", backupImported: "Sigurnosna kopija je vraćena.", backupInvalid: "Ova datoteka sigurnosne kopije nije valjana.", backupExportFailed: "Sigurnosnu kopiju nije moguće izraditi.", backupPersistWarning: "Podaci su vraćeni za ovu sesiju, ali pohrana preglednika nije dostupna.",
   },
   de: {
     eyebrow: "Kostenlose Online-App", title: "Emoji Copy & Paste", subtitle: "Finde das passende Emoji, verstehe seine Bedeutung und kopiere es sofort.", search: "Emojis oder Bedeutungen suchen…", all: "Alle",
@@ -110,7 +114,7 @@ const ui = {
     copy: "Emoji kopieren", copied: "kopiert!", copyImage: "Standbild kopieren", imageCopied: "Standbild kopiert!", imageCopyFallback: "Das Kopieren von Bildern wird hier nicht unterstützt. Stattdessen wurde das Emoji oder der Text kopiert.", shareAnimation: "Animation teilen", downloadGif: "GIF herunterladen", animationDownloaded: "Animiertes GIF heruntergeladen!", previousCategories: "Vorherige Kategorien anzeigen", moreCategories: "Weitere Kategorien anzeigen", add: "Zur Sammlung hinzufügen", added: "Zur Sammlung hinzugefügt", collection: "Deine Emoji-Sammlung", collectionHint: "Stelle eine Kombination zusammen und kopiere alles auf einmal.", copyAll: "Alle kopieren", clear: "Leeren", collectionCopied: "Emoji-Sammlung kopiert!",
     info: "Info & Support", theme: "Design wechseln", favoriteAdded: "Zu Favoriten hinzugefügt", favoriteRemoved: "Aus Favoriten entfernt", emptyFavorites: "Deine Lieblings-Emojis erscheinen hier.", emptyRecent: "Kopierte Emojis erscheinen hier.",
     supportTitle: "Projekt unterstützen", supportIntro: "Die Apps und Spiele sind kostenlos, freiwillige Spenden sind jedoch willkommen.", charity: "Ein Teil der Spenden wird an verschiedene Hilfsorganisationen weitergeleitet. Der größte Teil geht an Einrichtungen, die Kinder ohne angemessene elterliche Fürsorge betreuen.",
-    donateTo: "Spenden sind möglich über:", paypal: "PayPal-Konto", paypalText: "Unterstütze das Projekt sicher über PayPal.", openPaypal: "PayPal öffnen", stripe: "Kartenzahlung (Stripe)", stripeText: "Spende sicher mit Kredit- oder Debitkarte.", openStripe: "Stripe öffnen", crypto: "Krypto-Wallet", cryptoText: "Du kannst das Projekt auch mit Kryptowährungen unterstützen.", addressCopied: "Adresse kopiert!", appearanceNote: "Das Aussehen von Emojis kann je nach Gerät und App leicht variieren.",
+    donateTo: "Spenden sind möglich über:", paypal: "PayPal-Konto", paypalText: "Unterstütze das Projekt sicher über PayPal.", openPaypal: "PayPal öffnen", stripe: "Kartenzahlung (Stripe)", stripeText: "Spende sicher mit Kredit- oder Debitkarte.", openStripe: "Stripe öffnen", crypto: "Krypto-Wallet", cryptoText: "Du kannst das Projekt auch mit Kryptowährungen unterstützen.", addressCopied: "Adresse kopiert!", appearanceNote: "Das Aussehen von Emojis kann je nach Gerät und App leicht variieren.", backupTitle: "Datensicherung", backupIntro: "Speichere Sprache, Favoriten und zuletzt verwendete Emojis in einer JSON-Datei oder stelle sie später wieder her.", exportBackup: "JSON exportieren", importBackup: "JSON importieren", backupExported: "Sicherung heruntergeladen.", backupImported: "Sicherung wiederhergestellt.", backupInvalid: "Diese Sicherungsdatei ist ungültig.", backupExportFailed: "Die Sicherung konnte nicht erstellt werden.", backupPersistWarning: "Die Sicherung wurde für diese Sitzung wiederhergestellt, aber der Browserspeicher ist nicht verfügbar.",
   },
   it: {
     eyebrow: "App online gratuita", title: "Emoji Copy & Paste", subtitle: "Trova l'emoji giusta, capiscine il significato e copiala subito.", search: "Cerca emoji o significati…", all: "Tutti",
@@ -119,7 +123,7 @@ const ui = {
     favorites: "Preferiti", recent: "Usati di recente", results: "emoji", noResults: "Nessuna emoji trovata", noResultsHint: "Prova un'altra parola o categoria.", copy: "Copia emoji", copied: "copiata!", copyImage: "Copia immagine fissa", imageCopied: "Immagine fissa copiata!", imageCopyFallback: "La copia dell'immagine non è supportata qui. È stato copiato l'emoji o il testo.", shareAnimation: "Condividi animazione", downloadGif: "Scarica GIF", animationDownloaded: "GIF animata scaricata!", previousCategories: "Mostra le categorie precedenti", moreCategories: "Mostra altre categorie", add: "Aggiungi alla raccolta", added: "Aggiunta alla raccolta", collection: "La tua raccolta di emoji", collectionHint: "Crea una combinazione e copiala tutta insieme.", copyAll: "Copia tutto", clear: "Svuota", collectionCopied: "Raccolta copiata!",
     info: "Info e supporto", theme: "Cambia tema", favoriteAdded: "Aggiunta ai preferiti", favoriteRemoved: "Rimossa dai preferiti", emptyFavorites: "Le tue emoji preferite appariranno qui.", emptyRecent: "Le emoji copiate appariranno qui.",
     supportTitle: "Sostieni il progetto", supportIntro: "Le app e i giochi sono gratuiti, ma le donazioni volontarie sono benvenute.", charity: "Una parte delle donazioni ricevute sarà destinata a varie organizzazioni benefiche. La parte maggiore sarà donata a istituti che assistono bambini senza adeguate cure parentali.",
-    donateTo: "Puoi donare tramite:", paypal: "Conto PayPal", paypalText: "Sostieni il progetto in modo sicuro con PayPal.", openPaypal: "Apri PayPal", stripe: "Pagamento con carta (Stripe)", stripeText: "Dona in sicurezza con carta di credito o debito.", openStripe: "Apri Stripe", crypto: "Portafoglio crypto", cryptoText: "Puoi sostenere il progetto anche con criptovalute.", addressCopied: "indirizzo copiato!", appearanceNote: "L'aspetto delle emoji può variare leggermente tra dispositivi e app.",
+    donateTo: "Puoi donare tramite:", paypal: "Conto PayPal", paypalText: "Sostieni il progetto in modo sicuro con PayPal.", openPaypal: "Apri PayPal", stripe: "Pagamento con carta (Stripe)", stripeText: "Dona in sicurezza con carta di credito o debito.", openStripe: "Apri Stripe", crypto: "Portafoglio crypto", cryptoText: "Puoi sostenere il progetto anche con criptovalute.", addressCopied: "indirizzo copiato!", appearanceNote: "L'aspetto delle emoji può variare leggermente tra dispositivi e app.", backupTitle: "Backup dei dati", backupIntro: "Salva lingua, preferiti ed emoji usate di recente in un file JSON oppure ripristinali in seguito.", exportBackup: "Esporta JSON", importBackup: "Importa JSON", backupExported: "Backup scaricato.", backupImported: "Backup ripristinato.", backupInvalid: "Questo file di backup non è valido.", backupExportFailed: "Impossibile creare il backup.", backupPersistWarning: "Il backup è stato ripristinato per questa sessione, ma l'archiviazione del browser non è disponibile.",
   },
   es: {
     eyebrow: "Aplicación online gratuita", title: "Emoji Copy & Paste", subtitle: "Encuentra el emoji adecuado, comprende su significado y cópialo al instante.", search: "Buscar emojis o significados…", all: "Todos",
@@ -128,7 +132,7 @@ const ui = {
     favorites: "Favoritos", recent: "Usados recientemente", results: "emojis", noResults: "No se encontraron emojis", noResultsHint: "Prueba otra palabra o categoría.", copy: "Copiar emoji", copied: "¡copiado!", copyImage: "Copiar imagen fija", imageCopied: "¡Imagen fija copiada!", imageCopyFallback: "Aquí no se admite copiar imágenes. Se copió su emoji o texto.", shareAnimation: "Compartir animación", downloadGif: "Descargar GIF", animationDownloaded: "¡GIF animado descargado!", previousCategories: "Mostrar categorías anteriores", moreCategories: "Mostrar más categorías", add: "Añadir a la colección", added: "Añadido a la colección", collection: "Tu colección de emojis", collectionHint: "Crea una combinación y cópiala toda de una vez.", copyAll: "Copiar todo", clear: "Borrar", collectionCopied: "¡Colección copiada!",
     info: "Info y soporte", theme: "Cambiar tema", favoriteAdded: "Añadido a favoritos", favoriteRemoved: "Eliminado de favoritos", emptyFavorites: "Tus emojis favoritos aparecerán aquí.", emptyRecent: "Los emojis que copies aparecerán aquí.",
     supportTitle: "Apoya el proyecto", supportIntro: "Las aplicaciones y los juegos son gratuitos, pero las donaciones voluntarias son bienvenidas.", charity: "Una parte de las donaciones se destinará a distintas organizaciones benéficas. La mayor parte será donada a instituciones que cuidan a niños sin una atención parental adecuada.",
-    donateTo: "Puedes donar mediante:", paypal: "Cuenta PayPal", paypalText: "Apoya el proyecto de forma segura con PayPal.", openPaypal: "Abrir PayPal", stripe: "Pago con tarjeta (Stripe)", stripeText: "Dona de forma segura con tarjeta de crédito o débito.", openStripe: "Abrir Stripe", crypto: "Billetera cripto", cryptoText: "También puedes apoyar el proyecto con criptomonedas.", addressCopied: "¡dirección copiada!", appearanceNote: "La apariencia de los emojis puede variar ligeramente entre dispositivos y aplicaciones.",
+    donateTo: "Puedes donar mediante:", paypal: "Cuenta PayPal", paypalText: "Apoya el proyecto de forma segura con PayPal.", openPaypal: "Abrir PayPal", stripe: "Pago con tarjeta (Stripe)", stripeText: "Dona de forma segura con tarjeta de crédito o débito.", openStripe: "Abrir Stripe", crypto: "Billetera cripto", cryptoText: "También puedes apoyar el proyecto con criptomonedas.", addressCopied: "¡dirección copiada!", appearanceNote: "La apariencia de los emojis puede variar ligeramente entre dispositivos y aplicaciones.", backupTitle: "Copia de seguridad de datos", backupIntro: "Guarda el idioma, los favoritos y los emojis usados recientemente en un archivo JSON o restáuralos más tarde.", exportBackup: "Exportar JSON", importBackup: "Importar JSON", backupExported: "Copia de seguridad descargada.", backupImported: "Copia de seguridad restaurada.", backupInvalid: "Este archivo de copia de seguridad no es válido.", backupExportFailed: "No se pudo crear la copia de seguridad.", backupPersistWarning: "La copia se restauró para esta sesión, pero el almacenamiento del navegador no está disponible.",
   },
 } as const;
 
@@ -266,6 +270,17 @@ export default function Home() {
   const toggleFavorite = (item: EmojiEntry) => { const key = itemKey(item); const exists = favorites.includes(key); const updated = exists ? favorites.filter((favorite) => favorite !== key) : [...favorites, key]; setFavorites(updated); saveStoredList(getBrowserStorage(), STORAGE_KEYS.favorites, updated); toast(exists ? t.favoriteRemoved : t.favoriteAdded); };
   const addToCollection = (emoji: string) => { setCollection((current) => [...current, emoji]); toast(t.added); };
   const copyCollection = async () => { await copyText(collection.join("")); const keys = [...collection].reverse().map((value) => itemKey(emojis.find((item) => item.emoji === value) || { emoji: value } as EmojiEntry)); const updated = [...new Set([keys, recent].flat())].slice(0, 18); setRecent(updated); saveStoredList(getBrowserStorage(), STORAGE_KEYS.recent, updated, 18); toast.success(t.collectionCopied); };
+  const restoreBackup = (backup: EmojiBackupV1) => {
+    setLanguage(backup.language);
+    setFavorites([...backup.favorites]);
+    setRecent([...backup.recent]);
+
+    const storage = getBrowserStorage();
+    const languageSaved = saveLanguage(storage, backup.language);
+    const favoritesSaved = saveStoredList(storage, STORAGE_KEYS.favorites, backup.favorites);
+    const recentSaved = saveStoredList(storage, STORAGE_KEYS.recent, backup.recent, 18);
+    return languageSaved && favoritesSaved && recentSaved;
+  };
 
   return (
     <main className="emoji-app">
@@ -276,7 +291,7 @@ export default function Home() {
         <div className="header-actions">
           <Select value={language} onValueChange={(value) => setLanguage(value as Language)}><SelectTrigger className="language-select" aria-label="Language"><SelectValue /></SelectTrigger><SelectContent>{languages.map((item) => <SelectItem key={item.id} value={item.id}>{item.flag} {item.label}</SelectItem>)}</SelectContent></Select>
           <Button className="icon-button" variant="outline" size="icon" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} aria-label={t.theme} title={t.theme}>{resolvedTheme === "dark" ? <Sun /> : <Moon />}</Button>
-          <InfoDialog language={language} />
+          <InfoDialog language={language} favorites={favorites} recent={recent} onRestoreBackup={restoreBackup} />
         </div>
       </header>
       <section className="hero" id="top"><div className="eyebrow"><Sparkles size={15} /> {t.eyebrow}</div><h1>{t.title}</h1><p>{t.subtitle}</p></section>
@@ -331,7 +346,17 @@ function CategoryButton({ active, onClick, icon, label }: { active: boolean; onC
   return <button className={`category-button ${active ? "active" : ""}`} onClick={onClick} aria-pressed={active}><span>{icon}</span>{label}</button>;
 }
 
-function InfoDialog({ language }: { language: Language }) {
+function InfoDialog({
+  language,
+  favorites,
+  recent,
+  onRestoreBackup,
+}: {
+  language: Language;
+  favorites: string[];
+  recent: string[];
+  onRestoreBackup: (backup: EmojiBackupV1) => boolean;
+}) {
   const t = ui[language];
   const paymentUi = {
     en: { paypalDesc: "Pay securely with PayPal or other payment options offered by PayPal Checkout.", stripeDesc: "Pay securely by card or with payment methods available through Stripe Checkout.", cards: "Debit / Credit Card", wallets: "Digital wallets", paypalBtn: "Donate with PayPal ↗", stripeBtn: "Donate with Stripe ↗", availability: "Available payment methods can vary by country, device and payment provider.", copy: "Copy" },
@@ -341,6 +366,47 @@ function InfoDialog({ language }: { language: Language }) {
     es: { paypalDesc: "Paga de forma segura con PayPal u otros métodos disponibles mediante PayPal Checkout.", stripeDesc: "Paga de forma segura con tarjeta o con los métodos disponibles mediante Stripe Checkout.", cards: "Tarjeta de débito / crédito", wallets: "Carteras digitales", paypalBtn: "Donar con PayPal ↗", stripeBtn: "Donar con Stripe ↗", availability: "Los métodos de pago disponibles pueden variar según el país, el dispositivo y el proveedor de pago.", copy: "Copiar" },
   } as const;
   const p = paymentUi[language] || paymentUi.en;
+  const backupInputRef = useRef<HTMLInputElement>(null);
+
+  const exportBackup = () => {
+    try {
+      const backup = createEmojiBackup({ language, favorites, recent });
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = `emoji-copy-paste-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+      toast.success(t.backupExported);
+    } catch {
+      toast.error(t.backupExportFailed);
+    }
+  };
+
+  const importBackup = async (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    try {
+      const backup = parseEmojiBackupJson(await file.text());
+      if (!backup) {
+        toast.error(t.backupInvalid);
+        return;
+      }
+
+      const persisted = onRestoreBackup(backup);
+      if (persisted) toast.success(t.backupImported);
+      else toast.warning(t.backupPersistWarning);
+    } catch {
+      toast.error(t.backupInvalid);
+    } finally {
+      input.value = "";
+    }
+  };
   const copyAddress = async (currency: string, address: string) => { await copyText(address); toast.success(`${currency} ${t.addressCopied}`); };
 
   return (
@@ -355,6 +421,17 @@ function InfoDialog({ language }: { language: Language }) {
           <DialogDescription>{t.supportIntro}</DialogDescription>
         </DialogHeader>
         <div className="support-scroll">
+          <section className="backup-panel" aria-labelledby="emoji-backup-title">
+            <div className="backup-panel-copy">
+              <h3 id="emoji-backup-title">{t.backupTitle}</h3>
+              <p>{t.backupIntro}</p>
+            </div>
+            <div className="backup-actions">
+              <Button variant="outline" onClick={exportBackup}><Download /> {t.exportBackup}</Button>
+              <Button variant="outline" onClick={() => backupInputRef.current?.click()}><Upload /> {t.importBackup}</Button>
+              <input ref={backupInputRef} className="backup-file-input" type="file" accept="application/json,.json" aria-label={t.importBackup} onChange={importBackup} />
+            </div>
+          </section>
           <p className="charity-copy">{t.charity}</p>
           <h3>{t.donateTo}</h3>
 
