@@ -269,4 +269,3 @@ test("JSON backup parser accepts valid JSON and rejects malformed JSON", () => {
   );
   assert.equal(parseEmojiBackupJson("{bad json"), null);
 });
-
