@@ -1,6 +1,41 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+function parseAttributes(tag) {
+  const attributes = {};
+  const attributePattern = /([^\s=/>]+)\s*=\s*(["'])(.*?)\2/g;
+
+  for (const match of tag.matchAll(attributePattern)) {
+    attributes[match[1].toLowerCase()] = match[3];
+  }
+
+  return attributes;
+}
+
+function findTag(html, tagName, predicate) {
+  const pattern = new RegExp(`<${tagName}\\b[^>]*>`, "gi");
+
+  for (const match of html.matchAll(pattern)) {
+    const attributes = parseAttributes(match[0]);
+    if (predicate(attributes)) return attributes;
+  }
+
+  return null;
+}
+
+function findJsonLd(html) {
+  const pattern = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+
+  for (const match of html.matchAll(pattern)) {
+    const attributes = parseAttributes(`<script${match[1]}>`);
+    if ((attributes.type || "").toLowerCase() === "application/ld+json") {
+      return match[2];
+    }
+  }
+
+  return null;
+}
+
 test("verifies production metadata and SEO contract", async () => {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
@@ -29,30 +64,74 @@ test("verifies production metadata and SEO contract", async () => {
     /^text\/html\b/i,
   );
 
-  // Document title
-  assert.match(html, /<title>Emoji Copy &amp; Paste.*?Apps &amp; Games<\/title>/i);
+  const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? "";
+  assert.match(title, /Emoji Copy &amp; Paste/i);
+  assert.match(title, /Apps &amp; Games/i);
 
-  // Canonical URL
-  assert.match(html, /<link rel="canonical" href="https:\/\/emoji\.appsandgames\.org\/"/);
+  const canonical = findTag(
+    html,
+    "link",
+    (attrs) =>
+      (attrs.rel || "").toLowerCase() === "canonical" &&
+      attrs.href === "https://emoji.appsandgames.org/",
+  );
+  assert.ok(canonical, "canonical link should match production URL");
 
-  // Meta description
-  assert.match(html, /<meta name="description" content="[^"]*(emoji|flags|traffic signs)[^"]*"/i);
+  const description = findTag(
+    html,
+    "meta",
+    (attrs) => (attrs.name || "").toLowerCase() === "description",
+  );
+  assert.ok(description, "description meta should exist");
+  const descriptionContent = (description.content || "").toLowerCase();
+  assert.match(descriptionContent, /emoji/);
+  assert.match(descriptionContent, /flags/);
+  assert.match(descriptionContent, /traffic signs/);
 
-  // Robots
-  assert.match(html, /<meta name="robots" content="index, follow"/i);
+  const robots = findTag(
+    html,
+    "meta",
+    (attrs) => (attrs.name || "").toLowerCase() === "robots",
+  );
+  assert.equal((robots?.content || "").toLowerCase(), "index, follow");
 
-  // Open Graph
-  assert.match(html, /<meta property="og:title" content="Emoji Copy &amp; Paste/);
-  assert.match(html, /<meta property="og:image" content="https:\/\/appsandgames\.org\/assets\/social\/emoji-copy-paste\.jpg"/);
+  const ogTitle = findTag(
+    html,
+    "meta",
+    (attrs) => (attrs.property || "").toLowerCase() === "og:title",
+  );
+  assert.match(ogTitle?.content || "", /Emoji Copy &amp; Paste/i);
 
-  // Twitter Card
-  assert.match(html, /<meta name="twitter:card" content="summary_large_image"/);
-  assert.match(html, /<meta name="twitter:image" content="https:\/\/appsandgames\.org\/assets\/social\/emoji-copy-paste\.jpg"/);
+  const socialImage =
+    "https://appsandgames.org/assets/social/emoji-copy-paste.jpg";
 
-  // JSON-LD
-  assert.match(html, /<script type="application\/ld\+json">/);
-  assert.match(html, /"@type":\s*"WebApplication"/);
-  assert.match(html, /"name":\s*"Emoji Copy & Paste"/);
-  assert.match(html, /"isAccessibleForFree":\s*true/);
-  assert.match(html, /"inLanguage":\s*\["en","hr","de","it","es"\]/);
+  const ogImage = findTag(
+    html,
+    "meta",
+    (attrs) => (attrs.property || "").toLowerCase() === "og:image",
+  );
+  assert.equal(ogImage?.content, socialImage);
+
+  const twitterCard = findTag(
+    html,
+    "meta",
+    (attrs) => (attrs.name || "").toLowerCase() === "twitter:card",
+  );
+  assert.equal(twitterCard?.content, "summary_large_image");
+
+  const twitterImage = findTag(
+    html,
+    "meta",
+    (attrs) => (attrs.name || "").toLowerCase() === "twitter:image",
+  );
+  assert.equal(twitterImage?.content, socialImage);
+
+  const jsonLdSource = findJsonLd(html);
+  assert.ok(jsonLdSource, "JSON-LD script should exist");
+  const jsonLd = JSON.parse(jsonLdSource);
+
+  assert.equal(jsonLd["@type"], "WebApplication");
+  assert.equal(jsonLd.name, "Emoji Copy & Paste");
+  assert.equal(jsonLd.isAccessibleForFree, true);
+  assert.deepEqual(jsonLd.inLanguage, ["en", "hr", "de", "it", "es"]);
 });
