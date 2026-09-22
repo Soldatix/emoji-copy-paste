@@ -100,6 +100,31 @@ test("JSON backup UI is wired to validated backup helpers", () => {
   assert.match(pageSource, /accept="application\/json,\.json"/);
 });
 
+test("backup restore keeps valid import in memory when persistence fails", () => {
+  const restoreBlock = pageSource.match(
+    /const restoreBackup = \(backup: EmojiBackupV1\): BackupRestoreStatus => \{([\s\S]*?)\n  \};/,
+  );
+  assert.ok(restoreBlock, "restoreBackup callback should exist");
+
+  const body = restoreBlock[1];
+  assert.match(
+    body,
+    /if \(status !== "persisted"\) storageDisabledRef\.current = true;/,
+  );
+  assert.match(body, /setLanguage\(backup\.language\)/);
+  assert.match(body, /setFavorites\(\[\.\.\.backup\.favorites\]\)/);
+  assert.match(body, /setRecent\(\[\.\.\.backup\.recent\]\)/);
+  assert.match(
+    body,
+    /return status === "failed" \? "unavailable" : status;/,
+  );
+  assert.doesNotMatch(
+    body,
+    /if \(status === "failed"\)[\s\S]*?return status;/,
+    "persistence failure must not return before applying the validated backup in memory",
+  );
+});
+
 test("core copy/share/download capabilities are wired", () => {
   assert.match(pageSource, /navigator\.clipboard/);
   assert.match(pageSource, /navigator\.share/);
