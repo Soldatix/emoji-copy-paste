@@ -408,4 +408,3 @@ test("startup recovery keeps successful data from a committed transaction", () =
   );
   assert.equal(storage.read("emoji-restore-journal"), undefined);
 });
-
