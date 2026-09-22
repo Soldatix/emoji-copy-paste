@@ -281,16 +281,13 @@ export default function Home() {
     const storage = storageDisabledRef.current ? null : getBrowserStorage();
     const status = restoreEmojiBackup(storage, backup);
 
-    if (status === "failed") {
-      storageDisabledRef.current = true;
-      return status;
-    }
-    if (status === "unavailable") storageDisabledRef.current = true;
+    if (status !== "persisted") storageDisabledRef.current = true;
 
     setLanguage(backup.language);
     setFavorites([...backup.favorites]);
     setRecent([...backup.recent]);
-    return status;
+
+    return status === "failed" ? "unavailable" : status;
   };
 
   return (
