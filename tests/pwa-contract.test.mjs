@@ -160,10 +160,10 @@ test("PWA manifest defines stable theme colors and compatible icons", () => {
       purpose: "any",
     },
     {
-      src: "/favicon.svg",
-      sizes: "any",
-      type: "image/svg+xml",
-      purpose: "any",
+      src: "/pwa-maskable-512.png",
+      sizes: "512x512",
+      type: "image/png",
+      purpose: "maskable",
     },
   ]) {
     assert.ok(
@@ -183,6 +183,10 @@ test("PWA manifest defines stable theme colors and compatible icons", () => {
     height: 192,
   });
   assert.deepEqual(readPngDimensions("pwa-icon-512.png"), {
+    width: 512,
+    height: 512,
+  });
+  assert.deepEqual(readPngDimensions("pwa-maskable-512.png"), {
     width: 512,
     height: 512,
   });

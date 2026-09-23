@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description: "Find emoji meanings, flags and traffic signs and copy them instantly in five languages.",
     images: [socialImage],
   },
-  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+  icons: { icon: "/favicon.ico", shortcut: "/favicon.ico", apple: "/apple-touch-icon.png" },
 };
 
 const structuredData = {
@@ -66,6 +66,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
+        <script src="/pwa-install-capture.js"></script>
         <meta name="theme-color" content="#0C79D8" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Emoji Copy & Paste" />
