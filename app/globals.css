@@ -55,6 +55,19 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
 .dark .hero h1 { background-image: linear-gradient(100deg, #f2efff 8%, #aa9cff 52%, #ff84ad 92%); }
 .hero p { max-width: 620px; margin: 20px auto 0; color: var(--muted-foreground); font-size: 17px; line-height: 1.6; }
 
+.web-install-shell { max-width: 860px; margin: -4px auto 28px; position: relative; z-index: 2; }
+.web-install-card { padding: 20px 22px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 17px; border: 1px solid color-mix(in srgb, #7560ee 42%, var(--border)); border-radius: 22px; background: linear-gradient(120deg, color-mix(in srgb, var(--card) 96%, #eeeaff), color-mix(in srgb, var(--card) 97%, #fff5c8)); box-shadow: 0 16px 42px rgba(64, 50, 128, .11); }
+.dark .web-install-card { background: linear-gradient(120deg, color-mix(in srgb, var(--card) 94%, #352a66), color-mix(in srgb, var(--card) 95%, #493d25)); }
+.web-install-icon { width: 50px; height: 50px; display: grid; place-items: center; border-radius: 16px; color: #fff; background: linear-gradient(135deg, #765fe9, #e24782); box-shadow: 0 10px 24px rgba(104, 78, 207, .26); }
+.web-install-copy { min-width: 0; }
+.web-install-copy h2 { margin: 0 0 5px; font-size: 18px; letter-spacing: -.02em; }
+.web-install-copy p { margin: 0; color: var(--muted-foreground); font-size: 12.5px; line-height: 1.52; }
+.web-install-status { margin-top: 7px !important; color: #6252ce !important; font-weight: 750; }
+.dark .web-install-status { color: #b9afff !important; }
+.web-install-actions { display: flex; align-items: center; gap: 8px; }
+.web-install-actions button { min-height: 44px; white-space: nowrap; }
+.web-install-primary { color: #fff !important; border-color: #6757e8 !important; background: linear-gradient(135deg, #7664ee, #5c4bd2) !important; }
+
 .workspace { max-width: 1240px; margin: 0 auto; position: relative; z-index: 1; }
 .search-wrap { max-width: 700px; height: 58px; margin: 0 auto 22px; position: relative; }
 .search-icon { position: absolute; left: 18px; top: 18px; width: 22px; color: #766e90; z-index: 2; }
