@@ -136,7 +136,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
 .flag-code { color: var(--foreground); font-size: .92em; font-weight: 850; letter-spacing: .08em; white-space: nowrap; }
 .copy-prompt { margin-top: auto; padding-top: 11px; display: flex; align-items: center; gap: 5px; color: #6554d5; font-size: 11px; font-weight: 800; opacity: .72; }
 .dark .copy-prompt { color: #b5aaff; }
-.card-actions { position: absolute; top: 9px; right: 9px; display: flex; gap: 5px; }
+.card-actions { position: absolute; top: 9px; right: 9px; z-index: 3; display: flex; gap: 5px; }
 .mini-action { width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 10px; display: grid; place-items: center; color: #827b97; background: color-mix(in srgb, var(--card) 90%, transparent); cursor: pointer; transition: transform .15s ease, color .15s ease; }
 .mini-action:hover { transform: scale(1.08); color: #e33e72; }
 .mini-action.is-favorite { color: #e33e72; background: #fff0f5; }
