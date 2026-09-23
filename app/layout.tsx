@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -11,11 +11,6 @@ export const metadata: Metadata = {
   description: "Find emoji meanings, country flags and common traffic signs, then copy them instantly in English, Croatian, German, Italian or Spanish.",
   keywords: ["emoji", "copy emoji", "paste emoji", "emoji meanings", "country flags", "traffic signs", "prometni znakovi", "Unicode emoji", "Apps and Games"],
   applicationName: "Emoji Copy & Paste",
-  appleWebApp: {
-    capable: true,
-    title: "Emoji Copy & Paste",
-    statusBarStyle: "default",
-  },
   alternates: {
     canonical: appUrl,
   },
@@ -47,10 +42,6 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 
-export const viewport: Viewport = {
-  themeColor: "#0C79D8",
-};
-
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
@@ -75,6 +66,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="theme-color" content="#0C79D8" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="Emoji Copy & Paste" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
