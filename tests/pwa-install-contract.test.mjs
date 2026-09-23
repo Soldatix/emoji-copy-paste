@@ -11,6 +11,7 @@ const installSource = readFileSync(
   "utf8",
 );
 const layoutSource = readFileSync(join(projectRoot, "app/layout.tsx"), "utf8");
+const globalsSource = readFileSync(join(projectRoot, "app/globals.css"), "utf8");
 const captureSource = readFileSync(
   join(projectRoot, "public/pwa-install-capture.js"),
   "utf8",
@@ -56,8 +57,8 @@ test("install flow captures the native prompt and tracks installation lifecycle"
   assert.match(installSource, /await prompt\.userChoice/);
   assert.match(installSource, /choice\?\.outcome\s*===\s*["']dismissed["']/);
   assert.match(installSource, /addEventListener\(["']appinstalled["']/);
-  assert.match(installSource, /display-mode:\s*standalone/);
-  assert.match(installSource, /navigator as NavigatorWithStandalone/);
+  assert.doesNotMatch(installSource, /display-mode:\s*standalone/);
+  assert.doesNotMatch(installSource, /NavigatorWithStandalone/);
 });
 
 test("install UI has a safe fallback and Continue in browser removes the install flag", () => {
@@ -93,4 +94,11 @@ test("install prompt is buffered before React hydration", () => {
   assert.match(installSource, /installWindow\.__emojiInstallPrompt/);
   assert.match(installSource, /syncCapturedPrompt/);
   assert.match(installSource, /emoji-install-prompt-ready/);
+});
+
+test("Info and Support dialog has an Android-compatible centering fallback", () => {
+  assert.match(
+    globalsSource,
+    /\.support-dialog\s*\{[^}]*translate:\s*none\s*!important;[^}]*transform:\s*translate\(-50%,\s*-50%\)\s*!important;/s,
+  );
 });
