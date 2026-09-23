@@ -12,12 +12,17 @@ const killAfterMs = Number.parseInt(
 
 console.log("Running bounded vinext build...");
 
-const child = spawn(resolveProjectCommand("vinext"), ["build"], {
-  cwd: projectRoot,
-  env: createSitesEnv(),
-  stdio: "inherit",
-  shell: false,
-});
+const resolvedCommand = resolveProjectCommand("vinext");
+const child = spawn(
+  resolvedCommand.executable,
+  [...resolvedCommand.prefixArgs, "build"],
+  {
+    cwd: projectRoot,
+    env: createSitesEnv(),
+    stdio: "inherit",
+    shell: false,
+  },
+);
 
 let timedOut = false;
 let forceTimer;
