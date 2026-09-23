@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   description: "Find emoji meanings, country flags and common traffic signs, then copy them instantly in English, Croatian, German, Italian or Spanish.",
   keywords: ["emoji", "copy emoji", "paste emoji", "emoji meanings", "country flags", "traffic signs", "prometni znakovi", "Unicode emoji", "Apps and Games"],
   applicationName: "Emoji Copy & Paste",
-  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     title: "Emoji Copy & Paste",
@@ -75,6 +74,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="manifest" href="/manifest.webmanifest" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
