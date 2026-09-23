@@ -77,6 +77,22 @@ test("verifies production metadata and SEO contract", async () => {
   );
   assert.ok(canonical, "canonical link should match production URL");
 
+  const manifestLink = findTag(
+    html,
+    "link",
+    (attrs) =>
+      (attrs.rel || "").toLowerCase() === "manifest" &&
+      attrs.href === "/manifest.webmanifest",
+  );
+  assert.ok(manifestLink, "web manifest link should be rendered");
+
+  const themeColor = findTag(
+    html,
+    "meta",
+    (attrs) => (attrs.name || "").toLowerCase() === "theme-color",
+  );
+  assert.equal(themeColor?.content, "#0C79D8");
+
   const description = findTag(
     html,
     "meta",
