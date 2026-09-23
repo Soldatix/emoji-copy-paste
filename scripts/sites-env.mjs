@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 export const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -52,13 +52,26 @@ export function createSitesEnv(baseEnv = process.env) {
   return env;
 }
 
+const localBins = {
+  eslint: join(projectRoot, "node_modules", "eslint", "bin", "eslint.js"),
+  vinext: join(projectRoot, "node_modules", "vinext", "dist", "cli.js"),
+  "drizzle-kit": join(projectRoot, "node_modules", "drizzle-kit", "bin.cjs"),
+};
+
 export function resolveProjectCommand(command) {
-  const suffix = process.platform === "win32" ? ".cmd" : "";
-  const local = join(projectRoot, "node_modules", ".bin", command + suffix);
-  return existsSync(local) ? local : command;
+  const local = localBins[command];
+  if (local && existsSync(local)) {
+    return { executable: process.execPath, prefixArgs: [local] };
+  }
+
+  return { executable: command, prefixArgs: [] };
 }
 
-if (import.meta.url === `file://${process.argv[1].replaceAll("\\", "/")}`) {
+const isMain =
+  Boolean(process.argv[1]) &&
+  import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
+
+if (isMain) {
   const argv = process.argv.slice(2);
   if (argv[0] === "--") argv.shift();
 
@@ -68,12 +81,17 @@ if (import.meta.url === `file://${process.argv[1].replaceAll("\\", "/")}`) {
   }
 
   const [command, ...args] = argv;
-  const result = spawnSync(resolveProjectCommand(command), args, {
-    cwd: projectRoot,
-    env: createSitesEnv(),
-    stdio: "inherit",
-    shell: false,
-  });
+  const resolvedCommand = resolveProjectCommand(command);
+  const result = spawnSync(
+    resolvedCommand.executable,
+    [...resolvedCommand.prefixArgs, ...args],
+    {
+      cwd: projectRoot,
+      env: createSitesEnv(),
+      stdio: "inherit",
+      shell: false,
+    },
+  );
 
   if (result.error) {
     console.error(result.error.message);
