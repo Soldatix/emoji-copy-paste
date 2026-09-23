@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   description: "Find emoji meanings, country flags and common traffic signs, then copy them instantly in English, Croatian, German, Italian or Spanish.",
   keywords: ["emoji", "copy emoji", "paste emoji", "emoji meanings", "country flags", "traffic signs", "prometni znakovi", "Unicode emoji", "Apps and Games"],
   applicationName: "Emoji Copy & Paste",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Emoji Copy & Paste",
+    statusBarStyle: "default",
+  },
   alternates: {
     canonical: appUrl,
   },
@@ -40,6 +46,10 @@ export const metadata: Metadata = {
     images: [socialImage],
   },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0C79D8",
 };
 
 const structuredData = {
