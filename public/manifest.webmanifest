@@ -1,0 +1,20 @@
+{
+  "name": "Emoji Copy & Paste",
+  "short_name": "Emoji",
+  "description": "Find emoji meanings, country flags and common traffic signs, then copy them instantly in five languages.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0C79D8",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
