@@ -92,13 +92,17 @@ export function PwaInstallPanel({ language }: { language: Language }) {
   const [installState, setInstallState] = useState<InstallState>("waiting");
   const promptRef = useRef<InstallPromptEvent | null>(null);
   const mediaRef = useRef<MediaQueryList | null>(null);
+  const activeRef = useRef(false);
   const text = installUi[language] || installUi.en;
 
+  /* Query-string activation and standalone detection are browser-only state. */
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const installRequested =
       new URLSearchParams(window.location.search).get("install") === "web";
     if (!installRequested) return;
 
+    activeRef.current = true;
     setActive(true);
     const media = window.matchMedia("(display-mode: standalone)");
     mediaRef.current = media;
@@ -111,6 +115,7 @@ export function PwaInstallPanel({ language }: { language: Language }) {
     if (isStandalone(media)) markInstalled();
 
     const handleBeforeInstallPrompt = (event: Event) => {
+      if (!activeRef.current) return;
       const installEvent = event as InstallPromptEvent;
       event.preventDefault();
 
@@ -141,6 +146,7 @@ export function PwaInstallPanel({ language }: { language: Language }) {
     }
 
     const timer = window.setTimeout(() => {
+      if (!activeRef.current) return;
       setInstallState((current) =>
         current === "waiting" ? "unavailable" : current,
       );
@@ -158,10 +164,12 @@ export function PwaInstallPanel({ language }: { language: Language }) {
       } else {
         media.removeListener(handleModeChange);
       }
+      activeRef.current = false;
       promptRef.current = null;
       mediaRef.current = null;
     };
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const install = async () => {
     const media = mediaRef.current;
@@ -198,6 +206,7 @@ export function PwaInstallPanel({ language }: { language: Language }) {
     const url = new URL(window.location.href);
     url.searchParams.delete("install");
     window.history.replaceState(window.history.state, "", url);
+    activeRef.current = false;
     promptRef.current = null;
     setActive(false);
   };
