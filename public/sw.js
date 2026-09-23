@@ -87,8 +87,18 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(request)
         .then(async (response) => {
-          const cache = await caches.open(CACHE_NAME);
-          await cacheResponse(cache, "/", response);
+          const contentType = response.headers.get("content-type") || "";
+          const isRootHtml =
+            url.pathname === "/" &&
+            url.search === "" &&
+            response.ok &&
+            contentType.toLowerCase().includes("text/html");
+
+          if (isRootHtml) {
+            const cache = await caches.open(CACHE_NAME);
+            await cache.put("/", response.clone());
+          }
+
           return response;
         })
         .catch(async () => {
@@ -101,17 +111,23 @@ self.addEventListener("fetch", (event) => {
 
   if (!STATIC_DESTINATIONS.has(request.destination)) return;
 
-  event.respondWith(
-    caches.match(request).then(async (cached) => {
-      const network = fetch(request)
-        .then(async (response) => {
-          const cache = await caches.open(CACHE_NAME);
-          await cacheResponse(cache, request, response);
-          return response;
-        })
-        .catch(() => cached || Response.error());
+  const refresh = fetch(request).then(async (response) => {
+    const cache = await caches.open(CACHE_NAME);
+    await cacheResponse(cache, request, response);
+    return response;
+  });
 
-      return cached || network;
+  event.waitUntil(
+    refresh.then(
+      () => undefined,
+      () => undefined,
+    ),
+  );
+
+  event.respondWith(
+    caches.match(request).then((cached) => {
+      if (cached) return cached;
+      return refresh.catch(() => Response.error());
     }),
   );
 });
