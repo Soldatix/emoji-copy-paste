@@ -34,7 +34,10 @@ test("PWA manifest defines stable theme colors and a scalable icon", () => {
 });
 
 test("root metadata links the web manifest and exposes PWA browser metadata", () => {
-  assert.match(layoutSource, /manifest:\s*["']\/manifest\.webmanifest["']/);
+  assert.match(
+    layoutSource,
+    /<link\s+rel=["']manifest["']\s+href=["']\/manifest\.webmanifest["']\s*\/>/,
+  );
   assert.match(layoutSource, /appleWebApp:\s*\{/);
   assert.match(layoutSource, /capable:\s*true/);
   assert.match(layoutSource, /themeColor:\s*["']#0C79D8["']/);
