@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description: "Find emoji meanings, flags and traffic signs and copy them instantly in five languages.",
     images: [socialImage],
   },
-  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+  icons: { icon: "/favicon.ico", shortcut: "/favicon.ico", apple: "/apple-touch-icon.png" },
 };
 
 const structuredData = {

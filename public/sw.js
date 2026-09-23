@@ -1,11 +1,14 @@
 const CACHE_PREFIX = "emoji-vita-";
-const CACHE_NAME = `${CACHE_PREFIX}shell-v1`;
+const CACHE_NAME = `${CACHE_PREFIX}shell-v2`;
 const CORE_URLS = [
   "/",
   "/manifest.webmanifest",
-  "/favicon.svg",
+  "/favicon.ico",
+  "/favicon-32.png",
+  "/apple-touch-icon.png",
   "/pwa-icon-192.png",
   "/pwa-icon-512.png",
+  "/pwa-maskable-512.png",
 ];
 
 const STATIC_DESTINATIONS = new Set([
