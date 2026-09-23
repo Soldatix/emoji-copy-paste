@@ -196,6 +196,7 @@ footer a { color: inherit; text-underline-offset: 2px; }
 
 @media (max-width: 1050px) { .emoji-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 760px) {
+  .web-install-shell { margin: -2px auto 24px; }.web-install-card { grid-template-columns: auto minmax(0, 1fr); padding: 18px; }.web-install-actions { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; }.web-install-actions button { width: 100%; }
   .emoji-app { padding: 0 14px 26px; }.app-header { height: auto; min-height: 70px; padding: 12px 0; align-items: flex-start; }.brand { padding-top: 2px; font-size: 0; }.brand-mark { width: 42px; height: 42px; }
   .header-actions { flex-wrap: wrap; justify-content: flex-end; }.info-button span { display: none; }.language-select { min-width: 119px; }
   .hero { margin: 35px auto 27px; }.hero p { font-size: 15px; }.search-wrap { height: 54px; }.search-input { height: 54px !important; }.search-icon { top: 16px; }
@@ -204,6 +205,7 @@ footer a { color: inherit; text-underline-offset: 2px; }
   .backup-panel { grid-template-columns: 1fr; }.backup-actions { display: grid; grid-template-columns: 1fr 1fr; }.payment-grid { grid-template-columns: 1fr; }.support-header { padding: 23px 20px 18px; }.support-scroll { padding: 18px 20px 24px; }.wallet-row { grid-template-columns: 45px minmax(0, 1fr) 38px; }.wallet-row button { width: 36px; padding: 0; font-size: 0; }.wallet-row button svg { margin: 0; }footer { align-items: flex-start; flex-direction: column; gap: 7px; }
 }
 @media (max-width: 420px) {
+  .web-install-card { grid-template-columns: 1fr; text-align: center; }.web-install-icon { margin: 0 auto; }.web-install-actions { grid-column: 1; grid-template-columns: 1fr; }
   .emoji-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.emoji-copy-area { min-height: 174px; }.header-actions { gap: 6px; }.language-select { min-width: 112px; padding-left: 9px !important; padding-right: 9px !important; }
   .collection-actions { flex-direction: column; }.hero h1 { font-size: 38px; }.support-dialog { max-height: 92vh; }.support-scroll { padding-left: 15px; padding-right: 15px; }.support-header { padding-left: 18px; padding-right: 18px; }
 }
