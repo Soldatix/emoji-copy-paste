@@ -162,3 +162,15 @@ test("exported emoji catalog includes traffic, hearts and animated categories", 
     );
   }
 });
+
+
+test("Info and Support includes a localized app description", () => {
+  for (const key of ["aboutTitle", "aboutIntro"]) {
+    const matches = pageSource.match(new RegExp("\\b" + key + ":\\s*[\"']", "g")) || [];
+    assert.equal(matches.length, 5, key + " should be present for all five languages");
+  }
+
+  assert.match(pageSource, /id=["']emoji-about-title["']/);
+  assert.match(pageSource, /\{t\.aboutTitle\}/);
+  assert.match(pageSource, /\{t\.aboutIntro\}/);
+});
