@@ -142,6 +142,12 @@ button:focus-visible, a:focus-visible { outline: 3px solid color-mix(in srgb, va
 .support-scroll { min-height: 0; padding: 22px 28px 28px; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
 .charity-copy { margin: 0 0 22px; padding: 15px 17px; border-left: 4px solid #f4b824; border-radius: 0 13px 13px 0; color: var(--muted-foreground); background: color-mix(in srgb, var(--accent) 62%, transparent); font-size: 13px; line-height: 1.65; }
 .support-scroll h3 { margin: 0 0 12px; font-size: 16px; }
+.backup-panel { margin: 0 0 22px; padding: 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; border: 1px solid var(--border); border-radius: 17px; background: color-mix(in srgb, var(--card) 96%, var(--secondary)); }
+.backup-panel h3 { margin: 0 0 5px; }
+.backup-panel p { margin: 0; max-width: 520px; color: var(--muted-foreground); font-size: 12px; line-height: 1.5; }
+.backup-actions { display: flex; gap: 8px; }
+.backup-actions button { min-height: 44px; white-space: nowrap; }
+.backup-file-input { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .payment-card { min-width: 0; padding: 16px; display: grid; grid-template-columns: 43px 1fr; gap: 12px; border: 1px solid var(--border); border-radius: 17px; background: var(--card); }
 .payment-logo { width: 43px; height: 43px; border-radius: 13px; display: grid; place-items: center; color: #fff; font-size: 21px; font-weight: 900; }
@@ -182,7 +188,7 @@ footer a { color: inherit; text-underline-offset: 2px; }
   .hero { margin: 35px auto 27px; }.hero p { font-size: 15px; }.search-wrap { height: 54px; }.search-input { height: 54px !important; }.search-icon { top: 16px; }
   .collection-panel { align-items: stretch; flex-direction: column; }.collection-actions button { flex: 1; }.results-heading { align-items: flex-start; flex-direction: column; }.device-note { text-align: left; }
   .emoji-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }.emoji-card { border-radius: 17px; }.emoji-copy-area { min-height: 167px; padding: 15px 8px 31px; }.emoji-glyph { min-height: 63px; font-size: 46px; }.flag-image-wrap { width: 82px; height: 63px; }.flag-image { width: 76px; max-height: 52px; }.traffic-sign-image-wrap { height: 72px; }.traffic-sign-image { width: 68px; max-height: 68px; }.heart-face-image-wrap, .animated-image-wrap { width: 82px; height: 72px; }.heart-face-image, .animated-image { width: 76px; max-height: 76px; }.animated-card .emoji-copy-area { min-height: 164px; padding-bottom: 7px; }.animation-actions { padding: 0 8px 9px; grid-template-columns: minmax(0, 1fr) 35px; gap: 5px; }.animation-share, .animation-download { min-height: 35px; border-radius: 10px; }.animation-share { font-size: 10px; }.animation-download { font-size: 0; }.animation-share svg, .animation-download svg { width: 16px; height: 16px; }.emoji-meaning { font-size: 10.5px; line-height: 1.4; }.copy-prompt { font-size: 0; }.copy-prompt svg { width: 15px; height: 15px; }
-  .payment-grid { grid-template-columns: 1fr; }.support-header { padding: 23px 20px 18px; }.support-scroll { padding: 18px 20px 24px; }.wallet-row { grid-template-columns: 45px minmax(0, 1fr) 38px; }.wallet-row button { width: 36px; padding: 0; font-size: 0; }.wallet-row button svg { margin: 0; }footer { align-items: flex-start; flex-direction: column; gap: 7px; }
+  .backup-panel { grid-template-columns: 1fr; }.backup-actions { display: grid; grid-template-columns: 1fr 1fr; }.payment-grid { grid-template-columns: 1fr; }.support-header { padding: 23px 20px 18px; }.support-scroll { padding: 18px 20px 24px; }.wallet-row { grid-template-columns: 45px minmax(0, 1fr) 38px; }.wallet-row button { width: 36px; padding: 0; font-size: 0; }.wallet-row button svg { margin: 0; }footer { align-items: flex-start; flex-direction: column; gap: 7px; }
 }
 @media (max-width: 420px) {
   .emoji-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.emoji-copy-area { min-height: 174px; }.header-actions { gap: 6px; }.language-select { min-width: 112px; padding-left: 9px !important; padding-right: 9px !important; }

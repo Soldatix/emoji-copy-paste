@@ -8,7 +8,23 @@ export const STORAGE_KEYS = {
 
 const LANGUAGE_IDS: readonly Language[] = ["en", "hr", "de", "it", "es"];
 
-type StorageLike = Pick<Storage, "getItem" | "setItem">;
+type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
+
+const RESTORE_JOURNAL_KEY = "emoji-restore-journal";
+
+export type BackupRestoreStatus = "persisted" | "unavailable" | "failed";
+
+type RestoreSnapshot = {
+  language: string | null;
+  favorites: string | null;
+  recent: string | null;
+};
+
+type RestoreJournalV1 = {
+  version: 1;
+  status: "pending" | "committed";
+  previous: RestoreSnapshot;
+};
 export type StoredListKey =
   | typeof STORAGE_KEYS.favorites
   | typeof STORAGE_KEYS.recent;
@@ -143,4 +159,154 @@ export function parseEmojiBackup(value: unknown): EmojiBackupV1 | null {
     favorites: normalizeList(candidate.favorites),
     recent: normalizeList(candidate.recent, 18),
   };
+}
+
+export function parseEmojiBackupJson(text: string): EmojiBackupV1 | null {
+  try {
+    return parseEmojiBackup(JSON.parse(text));
+  } catch {
+    return null;
+  }
+}
+
+function isRawStorageValue(value: unknown): value is string | null {
+  return value === null || typeof value === "string";
+}
+
+function parseRestoreJournal(raw: string): RestoreJournalV1 | null {
+  try {
+    const value = JSON.parse(raw) as Record<string, unknown>;
+    const previous = value.previous as Record<string, unknown> | undefined;
+
+    if (
+      value.version !== 1 ||
+      (value.status !== "pending" && value.status !== "committed") ||
+      !previous ||
+      !isRawStorageValue(previous.language) ||
+      !isRawStorageValue(previous.favorites) ||
+      !isRawStorageValue(previous.recent)
+    ) {
+      return null;
+    }
+
+    return {
+      version: 1,
+      status: value.status,
+      previous: {
+        language: previous.language,
+        favorites: previous.favorites,
+        recent: previous.recent,
+      },
+    };
+  } catch {
+    return null;
+  }
+}
+
+function restoreRawValue(
+  storage: StorageLike,
+  key: string,
+  value: string | null,
+) {
+  if (value === null) storage.removeItem(key);
+  else storage.setItem(key, value);
+}
+
+function restoreSnapshot(storage: StorageLike, snapshot: RestoreSnapshot) {
+  restoreRawValue(storage, STORAGE_KEYS.language, snapshot.language);
+  restoreRawValue(storage, STORAGE_KEYS.favorites, snapshot.favorites);
+  restoreRawValue(storage, STORAGE_KEYS.recent, snapshot.recent);
+}
+
+export function recoverInterruptedRestore(
+  storage: StorageLike | null | undefined,
+): boolean {
+  if (!storage) return true;
+
+  try {
+    const raw = storage.getItem(RESTORE_JOURNAL_KEY);
+    if (!raw) return true;
+
+    const journal = parseRestoreJournal(raw);
+    if (!journal) {
+      storage.removeItem(RESTORE_JOURNAL_KEY);
+      return true;
+    }
+
+    if (journal.status === "pending") {
+      restoreSnapshot(storage, journal.previous);
+    }
+
+    try {
+      storage.removeItem(RESTORE_JOURNAL_KEY);
+    } catch {
+      // A committed journal is harmless if cleanup is temporarily blocked.
+      if (journal.status === "pending") return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function restoreEmojiBackup(
+  storage: StorageLike | null | undefined,
+  backup: EmojiBackupV1,
+): BackupRestoreStatus {
+  if (!storage) return "unavailable";
+  if (!recoverInterruptedRestore(storage)) return "failed";
+
+  let previous: RestoreSnapshot;
+  try {
+    previous = {
+      language: storage.getItem(STORAGE_KEYS.language),
+      favorites: storage.getItem(STORAGE_KEYS.favorites),
+      recent: storage.getItem(STORAGE_KEYS.recent),
+    };
+
+    const pending: RestoreJournalV1 = {
+      version: 1,
+      status: "pending",
+      previous,
+    };
+    storage.setItem(RESTORE_JOURNAL_KEY, JSON.stringify(pending));
+  } catch {
+    return "failed";
+  }
+
+  try {
+    storage.setItem(STORAGE_KEYS.language, backup.language);
+    storage.setItem(
+      STORAGE_KEYS.favorites,
+      JSON.stringify(normalizeList(backup.favorites)),
+    );
+    storage.setItem(
+      STORAGE_KEYS.recent,
+      JSON.stringify(normalizeList(backup.recent, 18)),
+    );
+
+    const committed: RestoreJournalV1 = {
+      version: 1,
+      status: "committed",
+      previous,
+    };
+    storage.setItem(RESTORE_JOURNAL_KEY, JSON.stringify(committed));
+  } catch {
+    try {
+      restoreSnapshot(storage, previous);
+      storage.removeItem(RESTORE_JOURNAL_KEY);
+    } catch {
+      // Keep the pending journal so the next app start can retry recovery.
+    }
+    return "failed";
+  }
+
+  try {
+    storage.removeItem(RESTORE_JOURNAL_KEY);
+  } catch {
+    // The committed marker prevents a later startup from rolling back success.
+  }
+
+  return "persisted";
 }
