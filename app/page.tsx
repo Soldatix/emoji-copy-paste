@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toaster } from "@/components/ui/sonner";
+import { PwaInstallPanel } from "@/components/pwa-install-panel";
 import { categoryIcons, emojis, type CategoryId, type EmojiEntry, type Language } from "@/lib/emoji-data";
 import { createEmojiBackup, getBrowserStorage, loadLanguage, loadStoredList, parseEmojiBackupJson, recoverInterruptedRestore, restoreEmojiBackup, saveLanguage, saveStoredList, STORAGE_KEYS, type BackupRestoreStatus, type EmojiBackupV1 } from "@/lib/emoji-storage";
 import { trafficSignDataUrl } from "@/lib/traffic-signs";
@@ -303,6 +304,7 @@ export default function Home() {
         </div>
       </header>
       <section className="hero" id="top"><div className="eyebrow"><Sparkles size={15} /> {t.eyebrow}</div><h1>{t.title}</h1><p>{t.subtitle}</p></section>
+      <PwaInstallPanel language={language} />
       <section className="workspace" aria-label={t.title}>
         <div className="search-wrap"><Search className="search-icon" aria-hidden="true" /><Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t.search} className="search-input" aria-label={t.search} />{query && <Button className="clear-search" variant="ghost" size="icon" onClick={() => setQuery("")} aria-label={t.clear}><X /></Button>}</div>
         <div className={`category-nav-wrap ${categoryScroll.left ? "can-scroll-left" : ""} ${categoryScroll.right ? "can-scroll-right" : ""}`}>
