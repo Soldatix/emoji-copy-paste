@@ -8,6 +8,7 @@ import { createServer } from "vite";
 
 const projectRoot = fileURLToPath(new URL("..", import.meta.url));
 const pageSource = readFileSync(join(projectRoot, "app/page.tsx"), "utf8");
+const globalsSource = readFileSync(join(projectRoot, "app/globals.css"), "utf8");
 
 const vite = await createServer({
   appType: "custom",
@@ -173,4 +174,12 @@ test("Info and Support includes a localized app description", () => {
   assert.match(pageSource, /id=["']emoji-about-title["']/);
   assert.match(pageSource, /\{t\.aboutTitle\}/);
   assert.match(pageSource, /\{t\.aboutIntro\}/);
+});
+
+
+test("favorite and collection controls stay above emoji artwork", () => {
+  assert.match(
+    globalsSource,
+    /\.card-actions\s*\{[^}]*position:\s*absolute;[^}]*z-index:\s*3;/s,
+  );
 });

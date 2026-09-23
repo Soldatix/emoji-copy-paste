@@ -18,8 +18,6 @@ type InstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform?: string }>;
 };
 
-type NavigatorWithStandalone = Navigator & { standalone?: boolean };
-
 type WindowWithInstallPrompt = Window & {
   __emojiInstallPrompt?: InstallPromptEvent | null;
 };
@@ -87,15 +85,10 @@ const installUi = {
   },
 } as const;
 
-function isStandalone(media: MediaQueryList) {
-  return media.matches || (navigator as NavigatorWithStandalone).standalone === true;
-}
-
 export function PwaInstallPanel({ language }: { language: Language }) {
   const [active, setActive] = useState(false);
   const [installState, setInstallState] = useState<InstallState>("waiting");
   const promptRef = useRef<InstallPromptEvent | null>(null);
-  const mediaRef = useRef<MediaQueryList | null>(null);
   const activeRef = useRef(false);
   const text = installUi[language] || installUi.en;
 
@@ -108,8 +101,6 @@ export function PwaInstallPanel({ language }: { language: Language }) {
 
     activeRef.current = true;
     setActive(true);
-    const media = window.matchMedia("(display-mode: standalone)");
-    mediaRef.current = media;
     const installWindow = window as WindowWithInstallPrompt;
 
     const markInstalled = () => {
@@ -119,11 +110,6 @@ export function PwaInstallPanel({ language }: { language: Language }) {
     };
 
     const syncCapturedPrompt = () => {
-      if (isStandalone(media)) {
-        markInstalled();
-        return;
-      }
-
       const captured = installWindow.__emojiInstallPrompt;
       if (captured && typeof captured.prompt === "function") {
         promptRef.current = captured;
@@ -131,28 +117,18 @@ export function PwaInstallPanel({ language }: { language: Language }) {
       }
     };
 
-    if (isStandalone(media)) markInstalled();
-    else syncCapturedPrompt();
+    syncCapturedPrompt();
 
     const handleBeforeInstallPrompt = (event: Event) => {
       if (!activeRef.current) return;
       const installEvent = event as InstallPromptEvent;
       event.preventDefault();
 
-      if (isStandalone(media)) {
-        markInstalled();
-        return;
-      }
-
       installWindow.__emojiInstallPrompt = installEvent;
       promptRef.current = installEvent;
       setInstallState(
         typeof installEvent.prompt === "function" ? "ready" : "unavailable",
       );
-    };
-
-    const handleModeChange = () => {
-      if (isStandalone(media)) markInstalled();
     };
 
     const handleCapturedPrompt = () => {
@@ -169,12 +145,6 @@ export function PwaInstallPanel({ language }: { language: Language }) {
       "emoji-install-prompt-ready",
       handleCapturedPrompt,
     );
-    if (typeof media.addEventListener === "function") {
-      media.addEventListener("change", handleModeChange);
-    } else {
-      media.addListener(handleModeChange);
-    }
-
     const timer = window.setTimeout(() => {
       if (!activeRef.current) return;
       setInstallState((current) =>
@@ -193,25 +163,13 @@ export function PwaInstallPanel({ language }: { language: Language }) {
         "emoji-install-prompt-ready",
         handleCapturedPrompt,
       );
-      if (typeof media.removeEventListener === "function") {
-        media.removeEventListener("change", handleModeChange);
-      } else {
-        media.removeListener(handleModeChange);
-      }
       activeRef.current = false;
       promptRef.current = null;
-      mediaRef.current = null;
     };
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const install = async () => {
-    const media = mediaRef.current;
-    if (media && isStandalone(media)) {
-      setInstallState("installed");
-      return;
-    }
-
     const prompt = promptRef.current;
     if (!prompt || typeof prompt.prompt !== "function") {
       setInstallState("unavailable");
@@ -222,9 +180,7 @@ export function PwaInstallPanel({ language }: { language: Language }) {
     try {
       await prompt.prompt();
       const choice = await prompt.userChoice;
-      if (media && isStandalone(media)) {
-        setInstallState("installed");
-      } else if (choice?.outcome === "dismissed") {
+      if (choice?.outcome === "dismissed") {
         setInstallState("dismissed");
       } else {
         setInstallState("installing");
