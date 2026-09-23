@@ -59,13 +59,19 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    Promise.all(
-      (await caches.keys())
-        .filter(
-          (name) => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME,
-        )
-        .map((name) => caches.delete(name)),
-    ).then(() => self.clients.claim()),
+    (async () => {
+      const cacheNames = await caches.keys();
+
+      await Promise.all(
+        cacheNames
+          .filter(
+            (name) => name.startsWith(CACHE_PREFIX) && name !== CACHE_NAME,
+          )
+          .map((name) => caches.delete(name)),
+      );
+
+      await self.clients.claim();
+    })(),
   );
 });
 
@@ -103,7 +109,7 @@ self.addEventListener("fetch", (event) => {
           await cacheResponse(cache, request, response);
           return response;
         })
-        .catch(() => cached);
+        .catch(() => cached || Response.error());
 
       return cached || network;
     }),
