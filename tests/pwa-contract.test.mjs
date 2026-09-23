@@ -122,6 +122,10 @@ test("production client registers the service worker as progressive enhancement"
 });
 
 test("service worker provides conservative same-origin offline caching", () => {
+  assert.doesNotThrow(
+    () => new Function(serviceWorkerSource),
+    "service worker source should parse as classic JavaScript",
+  );
   assert.match(serviceWorkerSource, /self\.addEventListener\("install"/);
   assert.match(serviceWorkerSource, /self\.addEventListener\("activate"/);
   assert.match(serviceWorkerSource, /self\.addEventListener\("fetch"/);
