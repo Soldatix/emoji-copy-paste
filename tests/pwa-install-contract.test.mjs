@@ -62,6 +62,8 @@ test("install UI has a safe fallback and Continue in browser removes the install
   );
   assert.match(installSource, /window\.setTimeout[\s\S]*?3000/);
   assert.match(installSource, /url\.searchParams\.delete\(["']install["']\)/);
+  assert.match(installSource, /if \(!activeRef\.current\) return;/);
+  assert.match(installSource, /activeRef\.current = false;/);
   assert.match(installSource, /window\.history\.replaceState/);
   assert.match(
     installSource,
