@@ -20,6 +20,10 @@ type InstallPromptEvent = Event & {
 
 type NavigatorWithStandalone = Navigator & { standalone?: boolean };
 
+type WindowWithInstallPrompt = Window & {
+  __emojiInstallPrompt?: InstallPromptEvent | null;
+};
+
 const installUi = {
   en: {
     title: "Install Emoji Copy & Paste",
@@ -106,13 +110,29 @@ export function PwaInstallPanel({ language }: { language: Language }) {
     setActive(true);
     const media = window.matchMedia("(display-mode: standalone)");
     mediaRef.current = media;
+    const installWindow = window as WindowWithInstallPrompt;
 
     const markInstalled = () => {
       promptRef.current = null;
+      installWindow.__emojiInstallPrompt = null;
       setInstallState("installed");
     };
 
+    const syncCapturedPrompt = () => {
+      if (isStandalone(media)) {
+        markInstalled();
+        return;
+      }
+
+      const captured = installWindow.__emojiInstallPrompt;
+      if (captured && typeof captured.prompt === "function") {
+        promptRef.current = captured;
+        setInstallState("ready");
+      }
+    };
+
     if (isStandalone(media)) markInstalled();
+    else syncCapturedPrompt();
 
     const handleBeforeInstallPrompt = (event: Event) => {
       if (!activeRef.current) return;
@@ -124,6 +144,7 @@ export function PwaInstallPanel({ language }: { language: Language }) {
         return;
       }
 
+      installWindow.__emojiInstallPrompt = installEvent;
       promptRef.current = installEvent;
       setInstallState(
         typeof installEvent.prompt === "function" ? "ready" : "unavailable",
@@ -134,11 +155,20 @@ export function PwaInstallPanel({ language }: { language: Language }) {
       if (isStandalone(media)) markInstalled();
     };
 
+    const handleCapturedPrompt = () => {
+      if (!activeRef.current) return;
+      syncCapturedPrompt();
+    };
+
     window.addEventListener(
       "beforeinstallprompt",
       handleBeforeInstallPrompt as EventListener,
     );
     window.addEventListener("appinstalled", markInstalled);
+    window.addEventListener(
+      "emoji-install-prompt-ready",
+      handleCapturedPrompt,
+    );
     if (typeof media.addEventListener === "function") {
       media.addEventListener("change", handleModeChange);
     } else {
@@ -159,6 +189,10 @@ export function PwaInstallPanel({ language }: { language: Language }) {
         handleBeforeInstallPrompt as EventListener,
       );
       window.removeEventListener("appinstalled", markInstalled);
+      window.removeEventListener(
+        "emoji-install-prompt-ready",
+        handleCapturedPrompt,
+      );
       if (typeof media.removeEventListener === "function") {
         media.removeEventListener("change", handleModeChange);
       } else {

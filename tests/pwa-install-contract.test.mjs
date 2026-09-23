@@ -10,6 +10,11 @@ const installSource = readFileSync(
   join(projectRoot, "components/pwa-install-panel.tsx"),
   "utf8",
 );
+const layoutSource = readFileSync(join(projectRoot, "app/layout.tsx"), "utf8");
+const captureSource = readFileSync(
+  join(projectRoot, "public/pwa-install-capture.js"),
+  "utf8",
+);
 
 test("Emoji page mounts the user-facing PWA install panel", () => {
   assert.match(
@@ -71,4 +76,21 @@ test("install UI has a safe fallback and Continue in browser removes the install
   );
   assert.match(installSource, /role=["']status["']/);
   assert.match(installSource, /aria-live=["']polite["']/);
+});
+
+
+test("install prompt is buffered before React hydration", () => {
+  assert.match(
+    layoutSource,
+    /<script\s+src=["']\/pwa-install-capture\.js["']><\/script>/,
+  );
+  assert.match(captureSource, /beforeinstallprompt/);
+  assert.match(
+    captureSource,
+    /window\.__emojiInstallPrompt\s*=\s*event/,
+  );
+  assert.match(captureSource, /emoji-install-prompt-ready/);
+  assert.match(installSource, /installWindow\.__emojiInstallPrompt/);
+  assert.match(installSource, /syncCapturedPrompt/);
+  assert.match(installSource, /emoji-install-prompt-ready/);
 });

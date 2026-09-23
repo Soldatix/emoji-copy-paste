@@ -66,6 +66,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
+        <script src="/pwa-install-capture.js"></script>
         <meta name="theme-color" content="#0C79D8" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Emoji Copy & Paste" />
