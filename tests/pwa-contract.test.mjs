@@ -38,7 +38,20 @@ test("root metadata links the web manifest and exposes PWA browser metadata", ()
     layoutSource,
     /<link\s+rel=["']manifest["']\s+href=["']\/manifest\.webmanifest["']\s*\/>/,
   );
-  assert.match(layoutSource, /appleWebApp:\s*\{/);
-  assert.match(layoutSource, /capable:\s*true/);
-  assert.match(layoutSource, /themeColor:\s*["']#0C79D8["']/);
+  assert.match(
+    layoutSource,
+    /<meta\s+name=["']theme-color["']\s+content=["']#0C79D8["']\s*\/>/,
+  );
+  assert.match(
+    layoutSource,
+    /<meta\s+name=["']apple-mobile-web-app-capable["']\s+content=["']yes["']\s*\/>/,
+  );
+  assert.match(
+    layoutSource,
+    /<meta\s+name=["']apple-mobile-web-app-title["']\s+content=["']Emoji Copy & Paste["']\s*\/>/,
+  );
+  assert.match(
+    layoutSource,
+    /<meta\s+name=["']apple-mobile-web-app-status-bar-style["']\s+content=["']default["']\s*\/>/,
+  );
 });
