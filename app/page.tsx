@@ -301,7 +301,7 @@ export default function Home() {
       <Toaster position="bottom-center" richColors />
       <div className="ambient ambient-one" aria-hidden="true" /><div className="ambient ambient-two" aria-hidden="true" />
       <header className="app-header">
-        <a className="brand" href="#top" aria-label="Apps and Games — Emoji Copy & Paste"><span className="brand-mark"><Zap size={21} fill="currentColor" /></span><span><strong>Apps</strong><span className="brand-amp"> & </span><strong>Games</strong></span></a>
+        <a className="brand" href="https://appsandgames.org/" aria-label="Apps and Games — Emoji Copy & Paste"><span className="brand-mark"><Zap size={21} fill="currentColor" /></span><span><strong>Apps</strong><span className="brand-amp"> & </span><strong>Games</strong></span></a>
         <div className="header-actions">
           <Select value={language} onValueChange={(value) => setLanguage(value as Language)}><SelectTrigger className="language-select" aria-label="Language"><SelectValue /></SelectTrigger><SelectContent>{languages.map((item) => <SelectItem key={item.id} value={item.id}>{item.flag} {item.label}</SelectItem>)}</SelectContent></Select>
           <Button className="icon-button" variant="outline" size="icon" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} aria-label={t.theme} title={t.theme}>{resolvedTheme === "dark" ? <Sun /> : <Moon />}</Button>

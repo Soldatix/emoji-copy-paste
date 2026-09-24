@@ -96,9 +96,13 @@ test("install prompt is buffered before React hydration", () => {
   assert.match(installSource, /emoji-install-prompt-ready/);
 });
 
-test("Info and Support dialog has an Android-compatible centering fallback", () => {
+test("Info and Support keeps the Android centering fallback scoped to touch devices", () => {
+  const baseRule = globalsSource.match(/\.support-dialog\s*\{([^}]*)\}/);
+  assert.ok(baseRule, "support dialog base rule should exist");
+  assert.doesNotMatch(baseRule[1], /(?:^|[;\s])translate\s*:/);
+  assert.doesNotMatch(baseRule[1], /transform\s*:/);
   assert.match(
     globalsSource,
-    /\.support-dialog\s*\{[^}]*translate:\s*none\s*!important;[^}]*transform:\s*translate\(-50%,\s*-50%\)\s*!important;/s,
+    /@media\s*\(hover:\s*none\)\s*and\s*\(pointer:\s*coarse\)\s*\{[\s\S]*?\.support-dialog\s*\{[^}]*translate:\s*none\s*!important;[^}]*transform:\s*translate\(-50%,\s*-50%\)\s*!important;/s,
   );
 });

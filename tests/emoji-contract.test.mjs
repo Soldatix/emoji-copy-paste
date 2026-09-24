@@ -183,3 +183,10 @@ test("favorite and collection controls stay above emoji artwork", () => {
     /\.card-actions\s*\{[^}]*position:\s*absolute;[^}]*z-index:\s*3;/s,
   );
 });
+
+test("Apps & Games brand links to the main website", () => {
+  assert.match(
+    pageSource,
+    /<a className="brand" href="https:\/\/appsandgames\.org\/" aria-label="Apps and Games — Emoji Copy & Paste">/,
+  );
+});
