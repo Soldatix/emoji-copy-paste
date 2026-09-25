@@ -57,7 +57,7 @@ export function AgLanguageMenu({
       <SelectTrigger className="language-select min-w-[178px]" aria-label={ariaLabel}>
         <LanguageRow language={current.id} code={current.code} label={current.label} />
       </SelectTrigger>
-      <SelectContent align="end">
+      <SelectContent position="popper" align="end" sideOffset={6} className="z-[100] min-w-[190px]">
         {languages.map((item) => (
           <SelectItem key={item.id} value={item.id} textValue={item.code + " " + item.label}>
             <LanguageRow language={item.id} code={item.code} label={item.label} />
