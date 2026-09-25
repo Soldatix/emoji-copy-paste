@@ -102,6 +102,12 @@ export function PwaInstallPanel({ language }: { language: Language }) {
     activeRef.current = true;
     setActive(true);
     const installWindow = window as WindowWithInstallPrompt;
+    const displayMode = window.matchMedia("(display-mode: standalone)");
+    const navigatorWithStandalone = window.navigator as Navigator & {
+      standalone?: boolean;
+    };
+    const isStandalone = () =>
+      displayMode.matches || navigatorWithStandalone.standalone === true;
 
     const markInstalled = () => {
       promptRef.current = null;
@@ -110,11 +116,19 @@ export function PwaInstallPanel({ language }: { language: Language }) {
     };
 
     const syncCapturedPrompt = () => {
+      if (isStandalone()) {
+        markInstalled();
+        return;
+      }
       const captured = installWindow.__emojiInstallPrompt;
       if (captured && typeof captured.prompt === "function") {
         promptRef.current = captured;
         setInstallState("ready");
       }
+    };
+
+    const handleDisplayModeChange = () => {
+      if (isStandalone()) markInstalled();
     };
 
     syncCapturedPrompt();
@@ -145,6 +159,7 @@ export function PwaInstallPanel({ language }: { language: Language }) {
       "emoji-install-prompt-ready",
       handleCapturedPrompt,
     );
+    displayMode.addEventListener?.("change", handleDisplayModeChange);
     const timer = window.setTimeout(() => {
       if (!activeRef.current) return;
       setInstallState((current) =>
@@ -163,6 +178,7 @@ export function PwaInstallPanel({ language }: { language: Language }) {
         "emoji-install-prompt-ready",
         handleCapturedPrompt,
       );
+      displayMode.removeEventListener?.("change", handleDisplayModeChange);
       activeRef.current = false;
       promptRef.current = null;
     };
