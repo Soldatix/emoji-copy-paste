@@ -7,18 +7,13 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AgLanguageMenu } from "@/components/ag-language-menu";
 import { Toaster } from "@/components/ui/sonner";
 import { PwaInstallPanel } from "@/components/pwa-install-panel";
 import { categoryIcons, emojis, type CategoryId, type EmojiEntry, type Language } from "@/lib/emoji-data";
 import { createEmojiBackup, getBrowserStorage, loadLanguage, loadStoredList, parseEmojiBackupJson, recoverInterruptedRestore, restoreEmojiBackup, saveLanguage, saveStoredList, STORAGE_KEYS, type BackupRestoreStatus, type EmojiBackupV1 } from "@/lib/emoji-storage";
 import { trafficSignDataUrl } from "@/lib/traffic-signs";
 
-const languages: Array<{ id: Language; label: string; flag: string }> = [
-  { id: "en", label: "English", flag: "🇬🇧" }, { id: "hr", label: "Hrvatski", flag: "🇭🇷" },
-  { id: "de", label: "Deutsch", flag: "🇩🇪" }, { id: "it", label: "Italiano", flag: "🇮🇹" },
-  { id: "es", label: "Español", flag: "🇪🇸" },
-];
 const categories: CategoryId[] = ["smileys", "people", "animals", "food", "activities", "travel", "objects", "symbols", "flags", "traffic", "hearts", "animated"];
 const favoritesIcon = "⭐";
 type AnimatedFilter = "all" | "smileys" | "hearts";
@@ -303,7 +298,7 @@ export default function Home() {
       <header className="app-header">
         <a className="brand" href="https://appsandgames.org/" aria-label="Apps and Games — Emoji Copy & Paste"><span className="brand-mark"><Zap size={21} fill="currentColor" /></span><span><strong>Apps</strong><span className="brand-amp"> & </span><strong>Games</strong></span></a>
         <div className="header-actions">
-          <Select value={language} onValueChange={(value) => setLanguage(value as Language)}><SelectTrigger className="language-select" aria-label="Language"><SelectValue /></SelectTrigger><SelectContent>{languages.map((item) => <SelectItem key={item.id} value={item.id}>{item.flag} {item.label}</SelectItem>)}</SelectContent></Select>
+          <AgLanguageMenu value={language} onValueChange={setLanguage} ariaLabel="Language" />
           <Button className="icon-button" variant="outline" size="icon" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} aria-label={t.theme} title={t.theme}>{resolvedTheme === "dark" ? <Sun /> : <Moon />}</Button>
           <InfoDialog language={language} favorites={favorites} recent={recent} onRestoreBackup={restoreBackup} />
         </div>
