@@ -60,6 +60,12 @@ The animated yellow face artwork is based on modified [Twemoji](https://github.c
 
 The Swiss no-overtaking sign (2.44) is sourced from the Federal Roads Office (ASTRA/FEDRO) via Wikimedia Commons and is in the public domain.
 
+## Credits / Attribution
+
+If you use our source code to create your own version, we'd appreciate a mention in its About / Info section:
+
+**Based on Emoji Copy & Paste by Apps & Games — [appsandgames.org](https://appsandgames.org/)**
+
 ## Author
 
 [Soldatix](https://github.com/Soldatix) — part of the [Apps & Games](https://appsandgames.org/) project.
