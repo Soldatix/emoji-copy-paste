@@ -214,3 +214,48 @@ footer a { color: inherit; text-underline-offset: 2px; }
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* Consent-gated Adsterra slot: first visible page area, above app header.
+ * Kept outside the interactive React emoji application and its overflow clipping.
+ * No empty reserved space or third-party requests without advertising consent.
+ */
+#emoji-ad-area[hidden], #emoji-ad-area .emoji-ad-unit[hidden] {
+  display: none !important;
+}
+#emoji-ad-area {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 0 8px;
+  position: relative;
+  z-index: 1;
+}
+#emoji-ad-area .emoji-ad-unit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+}
+.emoji-ad-label {
+  color: var(--muted-foreground, #738395);
+  font: 11px/1.4 system-ui, sans-serif;
+  text-align: center;
+  padding-bottom: 6px;
+}
+.emoji-privacy-footer {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 16px 20px;
+  margin: 0;
+}
+.emoji-privacy-footer .ag-privacy-footer-control {
+  cursor: pointer;
+  padding: 7px 12px;
+}
+@media (max-width: 319px) {
+  #emoji-ad-area { display: none !important; }
+}

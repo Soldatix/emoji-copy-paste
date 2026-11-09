@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import { PrivacyControls } from "./privacy-controls";
 
 const appUrl = "https://emoji.appsandgames.org/";
 const socialImage = "https://appsandgames.org/assets/social/emoji-copy-paste.jpg";
@@ -42,6 +43,10 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.ico", shortcut: "/favicon.ico", apple: "/apple-touch-icon.png" },
 };
 
+// Static server-rendered markup: the browser parses the original provider tags
+// before React hydration. Do not insert these ad scripts into the client page.
+const topAdMarkup = "<div class=\"emoji-ad-unit\" data-size=\"728x90\" hidden><script src=\"/emoji-adsterra-loader.js\" data-unit=\"desktop\"></script></div><div class=\"emoji-ad-unit\" data-size=\"320x50\" hidden><script src=\"/emoji-adsterra-loader.js\" data-unit=\"mobile\"></script></div>";
+
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
@@ -66,6 +71,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="stylesheet" href="https://appsandgames.org/privacy-choice.css" />
         <script src="/pwa-install-capture.js"></script>
         <meta name="theme-color" content="#0C79D8" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -76,7 +82,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body><Providers>{children}</Providers></body>
+      <body>
+        <section
+          id="emoji-ad-area"
+          aria-label="Advertisement"
+          hidden
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: topAdMarkup }}
+        />
+        <Providers>{children}</Providers>
+        <PrivacyControls />
+      </body>
     </html>
   );
 }
