@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import { PrivacyControls } from "./privacy-controls";
 
 const appUrl = "https://emoji.appsandgames.org/";
 const socialImage = "https://appsandgames.org/assets/social/emoji-copy-paste.jpg";
@@ -71,7 +72,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="stylesheet" href="https://appsandgames.org/privacy-choice.css" />
-        <script defer src="https://appsandgames.org/privacy-choice.js"></script>
         <script src="/pwa-install-capture.js"></script>
         <meta name="theme-color" content="#0C79D8" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -91,7 +91,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{ __html: topAdMarkup }}
         />
         <Providers>{children}</Providers>
-        <footer className="footer-links emoji-privacy-footer" aria-label="Privacy choices" suppressHydrationWarning />
+        <PrivacyControls />
       </body>
     </html>
   );
