@@ -27,12 +27,19 @@ async function loadEmojiCatalog() {
   return emojis;
 }
 
-test("app/page.tsx contains all five language IDs", () => {
-  const languagesBlock = pageSource.match(
+test("shared language menu declares all five language IDs and is wired to the page", () => {
+  const menuSource = readFileSync(join(projectRoot, "components/ag-language-menu.tsx"), "utf8");
+  assert.match(pageSource, /import\s+\{\s*AgLanguageMenu\s*\}\s+from\s+["']@\/components\/ag-language-menu["']/);
+  assert.match(pageSource, /<AgLanguageMenu\s+value=\{language\}\s+onValueChange=\{setLanguage\}/);
+  const languagesBlock = menuSource.match(
     /const languages:[\s\S]*?=\s*\[([\s\S]*?)\];/,
   );
   assert.ok(languagesBlock, "languages declaration should exist");
 
+  const ids = [...languagesBlock[1].matchAll(/\bid:\s*["']([^"']+)["']/g)].map((match) => match[1]);
+  assert.deepEqual(ids, ["en", "hr", "de", "it", "es"]);
+  assert.match(menuSource, /languages\.map\(\(item\)\s*=>/);
+  assert.match(menuSource, /<SelectItem\s+key=\{item\.id\}\s+value=\{item\.id\}/);
   for (const lang of ["en", "hr", "de", "it", "es"]) {
     assert.match(
       languagesBlock[1],
