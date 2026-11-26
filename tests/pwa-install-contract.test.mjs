@@ -57,8 +57,12 @@ test("install flow captures the native prompt and tracks installation lifecycle"
   assert.match(installSource, /await prompt\.userChoice/);
   assert.match(installSource, /choice\?\.outcome\s*===\s*["']dismissed["']/);
   assert.match(installSource, /addEventListener\(["']appinstalled["']/);
-  assert.doesNotMatch(installSource, /display-mode:\s*standalone/);
-  assert.doesNotMatch(installSource, /NavigatorWithStandalone/);
+  assert.match(installSource, /window\.matchMedia\(["']\(display-mode: standalone\)["']\)/);
+  assert.match(installSource, /displayMode\.matches\s*\|\|\s*navigatorWithStandalone\.standalone\s*===\s*true/);
+  assert.match(installSource, /if\s*\(isStandalone\(\)\)\s*\{?\s*markInstalled\(\)/);
+  assert.match(installSource, /const markInstalled\s*=\s*\(\)\s*=>\s*\{[\s\S]*?setInstallState\(["']installed["']\)/);
+  assert.match(installSource, /displayMode\.addEventListener\?\.\(["']change["'],\s*handleDisplayModeChange\)/);
+  assert.match(installSource, /displayMode\.removeEventListener\?\.\(["']change["'],\s*handleDisplayModeChange\)/);
 });
 
 test("install UI has a safe fallback and Continue in browser removes the install flag", () => {

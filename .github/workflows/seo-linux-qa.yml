@@ -21,8 +21,9 @@ jobs:
           node-version: '24'
       - name: Install locked dependencies using repository Linux procedure
         run: npm run install:ci
-      - name: Build and run existing regression suite
-        run: npm test
+      - name: Build production Vinext assets
+        id: build
+        run: npm run build
       - name: Verify built crawl assets (no deployment)
         run: |
           python3 - <<'PY'
@@ -42,3 +43,6 @@ jobs:
           assert [e.text for e in root.findall('s:url/s:loc', ns)] == [url]
           print('BUILT_CRAWL_ASSETS=PASS')
           PY
+      - name: Run existing regression suite
+        if: ${{ !cancelled() && steps.build.outcome != 'failure' }}
+        run: node --test tests/*.test.mjs
