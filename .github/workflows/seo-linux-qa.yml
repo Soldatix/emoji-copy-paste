@@ -1,0 +1,44 @@
+name: Emoji SEO Linux QA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'public/robots.txt'
+      - 'public/sitemap.xml'
+      - '.github/workflows/seo-linux-qa.yml'
+permissions:
+  contents: read
+jobs:
+  seo-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install locked dependencies using repository Linux procedure
+        run: npm run install:ci
+      - name: Build and run existing regression suite
+        run: npm test
+      - name: Verify built crawl assets (no deployment)
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          url = 'https://emoji.appsandgames.org/'
+          dist = Path('dist/client')
+          assert (dist / 'favicon.ico').is_file(), 'Expected client asset output missing'
+          robots = (dist / 'robots.txt').read_bytes()
+          sitemap = (dist / 'sitemap.xml').read_bytes()
+          assert robots == Path('public/robots.txt').read_bytes()
+          assert sitemap == Path('public/sitemap.xml').read_bytes()
+          assert robots.decode().splitlines() == ['User-agent: *', 'Allow: /', '', 'Sitemap: ' + url + 'sitemap.xml']
+          ns = {'s': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          root = ET.fromstring(sitemap)
+          assert root.tag == '{http://www.sitemaps.org/schemas/sitemap/0.9}urlset'
+          assert [e.text for e in root.findall('s:url/s:loc', ns)] == [url]
+          print('BUILT_CRAWL_ASSETS=PASS')
+          PY
